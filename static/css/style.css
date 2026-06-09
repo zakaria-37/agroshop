@@ -1196,30 +1196,28 @@ input, select, textarea, button { font-family: var(--font-body); }
 
   /* ── Navbar layout ── */
   .nav-inner {
-    padding: 10px 14px;
-    gap: 8px;
+    padding: 10px 16px;
+    gap: 10px;
     flex-wrap: nowrap;
-    align-items: center;
   }
 
-  /* ── Logo : icône + nom sur une seule ligne, tagline/powered masqués ── */
-  .logo { gap: 8px; flex-shrink: 0; min-width: 0; flex: 0 0 auto; }
+  /* ── Logo : on garde icône + nom sur une ligne, on masque tagline/powered ── */
+  .logo { gap: 8px; flex-shrink: 0; min-width: 0; }
   .logo > div:first-child { width: 36px !important; height: 36px !important; flex-shrink: 0; }
   .logo > div:first-child svg { width: 36px !important; height: 36px !important; }
-  .logo > div:last-child { display: flex; flex-direction: row; align-items: center; gap: 0; }
-  .logo-name { font-size: 1.05rem; letter-spacing: 1px; white-space: nowrap; display: block; }
+  .logo-name { font-size: 1.1rem; letter-spacing: 1px; white-space: nowrap; }
   .logo-tagline,
-  .logo-powered { display: none !important; }
+  .logo-powered { display: none; }
 
   /* ── Search : cachée sur mobile (accessible via menu) ── */
   .nav-search { display: none; }
 
-  /* ── Actions : compact, ne pousse pas le logo ── */
-  .nav-actions { gap: 6px; margin-left: auto; flex-shrink: 0; flex: 0 0 auto; align-items: center; }
+  /* ── Actions : compact ── */
+  .nav-actions { gap: 6px; margin-left: auto; flex-shrink: 0; }
   .btn-outline-sm,
   .btn-primary-sm { padding: 6px 10px; font-size: 0.75rem; }
 
-  /* Masquer les boutons connexion/inscription du nav — accessibles via hamburger ── */
+  /* Masquer les boutons connexion/inscription du nav sur très petits écrans */
   .btn-outline-sm.nav-btn,
   .btn-primary-sm.nav-btn { display: none; }
 
@@ -1284,7 +1282,7 @@ input, select, textarea, button { font-family: var(--font-body); }
 @media (max-width:480px) {
   /* ── Navbar encore plus compact ── */
   .nav-inner { padding: 8px 12px; }
-  .logo-name { font-size: 0.95rem; letter-spacing: 0.5px; }
+  .logo-name { font-size: 1rem; }
   .logo > div:first-child { width: 30px !important; height: 30px !important; }
   .logo > div:first-child svg { width: 30px !important; height: 30px !important; }
 
@@ -1989,4 +1987,226 @@ input, select, textarea, button { font-family: var(--font-body); }
   transform: scale(1.2) rotate(-10deg);
   background: rgba(46,204,113,0.2) !important;
   box-shadow: 0 0 15px rgba(46,204,113,0.3);
+}
+/* ══════════════════════════════════════════════════════════════
+   AGROSHOP — RESPONSIVE FIX PATCH
+   Correction overflow horizontal + compatibilité toutes tailles
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── BASE : empêcher tout débordement horizontal ── */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+* { max-width: 100%; }
+img, video, iframe, embed, object { max-width: 100%; height: auto; }
+
+/* ── CONTAINER safe sur petits écrans ── */
+.container {
+  width: 100%;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
+}
+
+/* ══════════════════════════════
+   TABLET  (max-width: 1024px)
+   ══════════════════════════════ */
+@media (max-width: 1024px) {
+  .hero-img-card { width: 100%; max-width: 420px; height: 320px; }
+  .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .feature-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+  .promo-inner { gap: 24px; }
+  .promo-image { width: 220px; height: 180px; }
+}
+
+/* ══════════════════════════════
+   MOBILE  (max-width: 768px)
+   ══════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── Topbar ── */
+  .topbar { display: none; }
+
+  /* ── Navbar ── */
+  .nav-inner { padding: 10px 14px; gap: 8px; flex-wrap: nowrap; }
+  .nav-search { display: none; }
+  .hamburger { display: flex; }
+  .cat-nav { display: none; }
+  .logo-tagline, .logo-powered { display: none; }
+  .logo-name { font-size: 1.05rem; }
+
+  /* boutons auth hors menu : cachés */
+  .nav-actions .btn-outline-sm,
+  .nav-actions .btn-primary-sm { display: none; }
+  .cart-btn { display: flex !important; }
+
+  /* ── Cart sidebar pleine largeur ── */
+  .cart-sidebar { width: 100%; right: -100%; }
+
+  /* ── Hero ── */
+  .hero { min-height: auto; }
+  .hero-content { flex-direction: column; padding: 36px 16px 28px; gap: 24px; }
+  .hero-text { max-width: 100%; }
+  .hero-title { font-size: clamp(1.7rem, 6.5vw, 2.6rem); }
+  .hero-image { display: none; }
+  .hero-actions { flex-direction: column; gap: 10px; }
+  .btn-hero-primary,
+  .btn-hero-secondary { width: 100%; justify-content: center; }
+  .hero-stats { gap: 10px; flex-wrap: wrap; }
+  .stat-divider { display: none; }
+
+  /* ── Features bar ── */
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .feature-item { border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
+  .feature-item:last-child { border-bottom: none; }
+
+  /* ── Catégories ── */
+  .categories-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .cat-img-wrap { height: 130px; }
+
+  /* ── Produits ── */
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .product-info { padding: 12px; }
+  .product-name { font-size: 0.82rem; }
+  .price-main { font-size: 1rem; }
+  .btn-add-cart { padding: 9px 10px; font-size: 0.75rem; }
+
+  /* ── Testimonials : 1 colonne ── */
+  .testimonials-grid { grid-template-columns: 1fr; gap: 14px; }
+  .testimonial-card { padding: 20px; }
+
+  /* ── Promo banner ── */
+  .promo-banner { padding: 36px 0; }
+  .promo-inner { flex-direction: column; gap: 20px; }
+  .promo-content h2 { font-size: 1.4rem; }
+  .promo-image { width: 100%; height: 160px; max-width: 100%; }
+
+  /* ── Footer ── */
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; gap: 6px; text-align: center; }
+
+  /* ── Page header ── */
+  .page-header h1 { font-size: 1.3rem; }
+
+  /* ── Products page ── */
+  .products-page { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+
+  /* ── Checkout / forms ── */
+  .checkout-grid { grid-template-columns: 1fr; }
+  .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+
+  /* ── Orders ── */
+  .order-card-footer { flex-wrap: wrap; gap: 8px; }
+  .order-total { margin-left: 0; }
+
+  /* ── Mobile search inside menu ── */
+  .mobile-menu-search { padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .mobile-menu-search form {
+    display: flex; border: 1px solid var(--border);
+    border-radius: 4px; overflow: hidden;
+    background: rgba(46,204,113,0.04);
+  }
+  .mobile-menu-search input {
+    flex: 1; padding: 9px 14px; border: none; outline: none;
+    font-size: 0.85rem; background: transparent; color: var(--text);
+    font-family: var(--font-mono);
+  }
+  .mobile-menu-search button {
+    background: var(--green-neon); color: var(--bg-deep);
+    border: none; padding: 9px 16px; font-weight: 700;
+  }
+
+  /* ── Sections spacing ── */
+  .section-categories, .section-products { padding: 44px 0; }
+  .testimonials { padding: 44px 0; }
+  .section-header { margin-bottom: 28px; }
+  .section-title { font-size: clamp(1.3rem, 5vw, 1.7rem); }
+}
+
+/* ══════════════════════════════
+   SMALL MOBILE  (max-width: 480px)
+   ══════════════════════════════ */
+@media (max-width: 480px) {
+  /* ── Navbar ── */
+  .nav-inner { padding: 8px 10px; }
+  .logo-name { font-size: 0.95rem; letter-spacing: 0.5px; }
+  .logo > div:first-child { width: 30px !important; height: 30px !important; flex-shrink: 0; }
+  .logo > div:first-child svg { width: 30px !important; height: 30px !important; }
+  .btn-outline-sm, .btn-primary-sm { display: none !important; }
+  .cart-btn { display: flex !important; }
+
+  /* ── Produits : 2 colonnes très compactes ── */
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .product-img-wrap { aspect-ratio: 1; }
+  .product-info { padding: 10px; }
+  .product-desc { display: none; }
+  .product-name a { font-size: 0.78rem; }
+  .price-main { font-size: 0.88rem; }
+  .product-stock { font-size: 0.65rem; }
+  .btn-add-cart { padding: 8px 6px; font-size: 0.7rem; gap: 4px; }
+
+  /* ── Catégories : 2 colonnes ── */
+  .categories-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .cat-img-wrap { height: 110px; }
+  .cat-info h3 { font-size: 0.78rem; }
+
+  /* ── Features bar : 1 colonne ── */
+  .features-grid { grid-template-columns: 1fr; }
+
+  /* ── Hero badge responsive ── */
+  .hero-badge { font-size: 0.7rem; padding: 5px 10px; }
+  .hero-sub { font-size: 0.85rem; }
+  .hero-stats .stat strong { font-size: 1.1rem; }
+  .hero-stats .stat span { font-size: 0.65rem; }
+
+  /* ── Testimonials ── */
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .testimonial-card { padding: 16px; }
+  .testimonial-card p { font-size: 0.83rem; }
+
+  /* ── Section header ── */
+  .section-title { font-size: clamp(1.2rem, 4.5vw, 1.5rem); letter-spacing: 1px; }
+  .section-badge { font-size: 0.68rem; }
+
+  /* ── Promo ── */
+  .promo-content h2 { font-size: 1.2rem; }
+  .promo-content p { font-size: 0.82rem; }
+  .btn-promo { padding: 10px 20px; font-size: 0.82rem; }
+
+  /* ── Footer ── */
+  .payment-icons { font-size: 1.2rem; }
+
+  /* ── Flash messages ── */
+  .flash-container { right: 10px; left: 10px; max-width: none; }
+  .flash-msg { font-size: 0.8rem; padding: 10px 12px; }
+
+  /* ── Auth ── */
+  .auth-form-side { padding: 30px 16px; }
+  .auth-card h2 { font-size: 1.3rem; }
+
+  /* ── Order detail ── */
+  .order-detail-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .order-detail-header, .order-detail-items, .order-detail-totals,
+  .order-address, .order-actions { padding: 14px 16px; }
+  .order-actions { flex-wrap: wrap; }
+
+  /* ── Sections spacing ── */
+  .section-categories, .section-products { padding: 32px 0; }
+  .testimonials { padding: 32px 0; }
+}
+
+/* ══════════════════════════════
+   TRÈS PETIT  (max-width: 360px)
+   ══════════════════════════════ */
+@media (max-width: 360px) {
+  .products-grid { grid-template-columns: 1fr; }
+  .categories-grid { grid-template-columns: 1fr 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  .hero-title { font-size: 1.5rem; }
+  .logo-name { font-size: 0.85rem; }
 }
