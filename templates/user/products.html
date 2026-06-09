@@ -94,7 +94,7 @@
             <p class="product-desc">{{ product.description | truncate(90) }}</p>
             <div class="product-bottom">
               <div class="product-price">
-                <span class="price-main">{{ "%.0f"|format(product.price * 135) }} DA</span>
+                <span class="price-main">{{ "%.0f"|format(product.price) }} DA</span>
               </div>
               <div class="product-stock {% if product.stock > 10 %}in-stock{% elif product.stock > 0 %}low-stock{% else %}out-stock{% endif %}">
                 {% if product.stock > 10 %}<i class="fa fa-check-circle"></i> En Stock
