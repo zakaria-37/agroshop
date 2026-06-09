@@ -1,0 +1,176 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Statistiques – AgroShop Admin{% endblock %}
+{% block page_title %}<i class="fa fa-chart-bar"></i> Statistiques & Rapports{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Cartes résumé (chargées via API) -->
+<div class="stat-cards" id="statCards">
+  <div class="stat-card">
+    <div class="stat-card-icon green"><i class="fa fa-coins"></i></div>
+    <div><div class="stat-card-value" id="s-revenue">—</div><div class="stat-card-label">Chiffre d'Affaires Total</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon blue"><i class="fa fa-receipt"></i></div>
+    <div><div class="stat-card-value" id="s-orders">—</div><div class="stat-card-label">Commandes Total</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon orange"><i class="fa fa-users"></i></div>
+    <div><div class="stat-card-value" id="s-users">—</div><div class="stat-card-label">Clients</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon purple"><i class="fa fa-box"></i></div>
+    <div><div class="stat-card-value" id="s-products">—</div><div class="stat-card-label">Produits</div></div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-top:4px">
+  <!-- Graphique revenus mensuels -->
+  <div style="background:white;border-radius:14px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h3 style="font-weight:700;font-size:1rem"><i class="fa fa-chart-line" style="color:#2e7d32;margin-right:8px"></i>Revenus Mensuels (6 derniers mois)</h3>
+    </div>
+    <canvas id="revenueChart" height="100"></canvas>
+  </div>
+
+  <!-- Graphique catégories -->
+  <div style="background:white;border-radius:14px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06)">
+    <h3 style="font-weight:700;font-size:1rem;margin-bottom:20px"><i class="fa fa-chart-pie" style="color:#2e7d32;margin-right:8px"></i>Produits par Catégorie</h3>
+    <canvas id="categoryChart"></canvas>
+    <div id="categoryLegend" style="margin-top:16px;display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+</div>
+
+<!-- Répartition statuts commandes -->
+<div style="background:white;border-radius:14px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin-top:24px">
+  <h3 style="font-weight:700;font-size:1rem;margin-bottom:20px"><i class="fa fa-chart-bar" style="color:#2e7d32;margin-right:8px"></i>Répartition par Statut des Commandes</h3>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px" id="statusBreakdown">
+    <div style="text-align:center;padding:20px;border-radius:12px;background:#f8faf8;border:2px solid #e5e7eb">
+      <div style="font-size:1.8rem;font-weight:700;color:#e65100" id="count-pending">—</div>
+      <div style="font-size:0.8rem;color:#888;margin-top:4px">En attente</div>
+      <div style="width:100%;height:4px;background:#e65100;border-radius:2px;margin-top:10px;opacity:0.3"></div>
+    </div>
+    <div style="text-align:center;padding:20px;border-radius:12px;background:#f8faf8;border:2px solid #e5e7eb">
+      <div style="font-size:1.8rem;font-weight:700;color:#1565c0" id="count-processing">—</div>
+      <div style="font-size:0.8rem;color:#888;margin-top:4px">En cours</div>
+      <div style="width:100%;height:4px;background:#1565c0;border-radius:2px;margin-top:10px;opacity:0.3"></div>
+    </div>
+    <div style="text-align:center;padding:20px;border-radius:12px;background:#f8faf8;border:2px solid #e5e7eb">
+      <div style="font-size:1.8rem;font-weight:700;color:#6a1b9a" id="count-shipped">—</div>
+      <div style="font-size:0.8rem;color:#888;margin-top:4px">Expédiées</div>
+      <div style="width:100%;height:4px;background:#6a1b9a;border-radius:2px;margin-top:10px;opacity:0.3"></div>
+    </div>
+    <div style="text-align:center;padding:20px;border-radius:12px;background:#f8faf8;border:2px solid #e5e7eb">
+      <div style="font-size:1.8rem;font-weight:700;color:#2e7d32" id="count-delivered">—</div>
+      <div style="font-size:0.8rem;color:#888;margin-top:4px">Livrées</div>
+      <div style="width:100%;height:4px;background:#2e7d32;border-radius:2px;margin-top:10px;opacity:0.3"></div>
+    </div>
+    <div style="text-align:center;padding:20px;border-radius:12px;background:#f8faf8;border:2px solid #e5e7eb">
+      <div style="font-size:1.8rem;font-weight:700;color:#c62828" id="count-cancelled">—</div>
+      <div style="font-size:0.8rem;color:#888;margin-top:4px">Annulées</div>
+      <div style="width:100%;height:4px;background:#c62828;border-radius:2px;margin-top:10px;opacity:0.3"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function formatDA(val) {
+  return Math.round(val).toLocaleString('fr-DZ') + ' DA';
+}
+
+async function loadStats() {
+  try {
+    const res = await fetch('/api/admin/stats');
+    const data = await res.json();
+    if (data.error) return;
+
+    // Cartes résumé
+    document.getElementById('s-revenue').textContent = formatDA(data.total_revenue);
+    document.getElementById('s-orders').textContent = data.total_orders;
+    document.getElementById('s-users').textContent = data.total_users;
+    document.getElementById('s-products').textContent = data.total_products;
+
+    // Graphique revenus mensuels
+    const revCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revCtx, {
+      type: 'bar',
+      data: {
+        labels: data.monthly_sales.map(m => m.month),
+        datasets: [{
+          label: 'Revenus (DA)',
+          data: data.monthly_sales.map(m => m.revenue),
+          backgroundColor: 'rgba(46,125,50,0.15)',
+          borderColor: '#2e7d32',
+          borderWidth: 2,
+          borderRadius: 8,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: '#f0f0f0' },
+            ticks: { callback: v => Math.round(v).toLocaleString('fr-DZ') + ' DA' }
+          },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+
+    // Graphique catégories
+    const colors = ['#2e7d32','#1565c0','#e65100','#6a1b9a','#ad1457'];
+    const catCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(catCtx, {
+      type: 'doughnut',
+      data: {
+        labels: data.category_distribution.map(c => c.name),
+        datasets: [{
+          data: data.category_distribution.map(c => c.count),
+          backgroundColor: colors,
+          borderWidth: 0,
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        cutout: '65%',
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    // Légende catégories
+    const legend = document.getElementById('categoryLegend');
+    data.category_distribution.forEach((c, i) => {
+      legend.innerHTML += `<div style="display:flex;align-items:center;gap:8px;font-size:0.82rem">
+        <div style="width:12px;height:12px;border-radius:3px;background:${colors[i]};flex-shrink:0"></div>
+        <span>${c.name}</span>
+        <strong style="margin-left:auto">${c.count}</strong>
+      </div>`;
+    });
+
+  } catch(e) {
+    console.error('Erreur statistiques :', e);
+  }
+}
+
+// Comptage statuts commandes via l'API orders
+async function loadOrderStats() {
+  try {
+    const statuses = ['pending','processing','shipped','delivered','cancelled'];
+    for (const status of statuses) {
+      const res = await fetch(`/api/orders?status=${status}`);
+      // Comptage côté admin via fetch dédié si disponible
+    }
+  } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', loadStats);
+</script>
+{% endblock %}

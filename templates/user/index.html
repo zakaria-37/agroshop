@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% block title %}AgroShop – Produits Agricoles Premium{% endblock %}
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-overlay"></div>
+    <div class="hero-particles" id="heroParticles"></div>
+  </div>
+  <div class="container hero-content">
+    <div class="hero-text">
+      <span class="hero-badge"><i class="fa fa-leaf"></i> Fait confiance par 10 000+ Agriculteurs</span>
+      <h1 class="hero-title">
+        Cultivez Mieux,<br>
+        <span class="hero-highlight">Récoltez Plus</span>
+      </h1>
+      <p class="hero-sub">Produits agricoles premium livrés jusqu'à votre exploitation. Semences, engrais, pesticides, outils — tout ce qu'il vous faut pour une récolte record.</p>
+      <div class="hero-actions">
+        <a href="{{ url_for('products') }}" class="btn-hero-primary">
+          <i class="fa fa-store"></i> Commander
+        </a>
+        <a href="{{ url_for('products', category='seeds') }}" class="btn-hero-secondary">
+          <i class="fa fa-seedling"></i> Voir les Semences
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><strong>500+</strong><span>Produits</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><strong>10K+</strong><span>Clients</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><strong>50+</strong><span>Marques</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><strong>24/7</strong><span>Support</span></div>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="hero-img-card">
+        <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600&q=80" alt="Farming">
+        <div class="hero-img-badge">
+          <i class="fa fa-truck"></i>
+          <div><strong>Livraison Rapide</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES BAR -->
+<section class="features-bar">
+  <div class="container features-grid">
+    <div class="feature-item">
+      <div class="feature-icon"><i class="fa fa-truck"></i></div>
+      <div>
+        <strong>Livraison Offerte</strong>
+        <span>Commandes dès 10 000 DA</span>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><i class="fa fa-shield-alt"></i></div>
+      <div>
+        <strong>Garantie Qualité</strong>
+        <span>Produits certifiés</span>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><i class="fa fa-undo"></i></div>
+      <div>
+        <strong>Retours Faciles</strong>
+        <span>Politique 30 jours</span>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><i class="fa fa-headset"></i></div>
+      <div>
+        <strong>Support Expert</strong>
+        <span>Conseils agronomiques</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES SECTION -->
+<section class="section-categories">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">Parcourir par Type</span>
+      <h2 class="section-title">Acheter par Catégorie</h2>
+      <p class="section-sub">Trouvez exactement ce dont votre ferme a besoin</p>
+    </div>
+    <div class="categories-grid">
+      {% set cat_colors = ['#2e7d32','#1565c0','#e65100','#6a1b9a','#ad1457'] %}
+      {% set cat_imgs = [
+        'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=300&q=80',
+        'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=300&q=80',
+        'https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=300&q=80',
+        'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=300&q=80',
+        'https://images.unsplash.com/photo-1585059895524-72359e06133a?w=300&q=80'
+      ] %}
+      {% for cat in categories %}
+      <a href="{{ url_for('products', category=cat.slug) }}" class="category-card" style="--cat-color: {{ cat_colors[loop.index0 % 5] }}">
+        <div class="cat-img-wrap">
+          <img src="{{ cat_imgs[loop.index0 % 5] }}" alt="{{ cat.name }}">
+          <div class="cat-overlay"></div>
+        </div>
+        <div class="cat-info">
+          <div class="cat-icon-wrap"><i class="fa {{ cat.icon }}"></i></div>
+          <h3>{{ cat.name }}</h3>
+          <span>Explore <i class="fa fa-arrow-right"></i></span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PRODUCTS -->
+<section class="section-products" id="featured">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge"><i class="fa fa-star"></i> Sélection du Moment</span>
+      <h2 class="section-title">Produits Vedettes</h2>
+      <a href="{{ url_for('products') }}" class="see-all">Tout voir <i class="fa fa-arrow-right"></i></a>
+    </div>
+    <div class="products-grid">
+      {% for product in featured %}
+      <div class="product-card" data-id="{{ product.id }}">
+        <div class="product-img-wrap">
+          <a href="{{ url_for('product_detail', pid=product.id) }}">
+            <img src="{{ product.image_url or 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=80' }}" alt="{{ product.name }}">
+          </a>
+          <div class="product-badges">
+            <span class="badge-featured"><i class="fa fa-star"></i> Featured</span>
+          </div>
+          <div class="product-actions-hover">
+            <button class="btn-wishlist" title="Wishlist"><i class="fa fa-heart"></i></button>
+            <a href="{{ url_for('product_detail', pid=product.id) }}" class="btn-quickview" title="Quick View"><i class="fa fa-eye"></i></a>
+          </div>
+        </div>
+        <div class="product-info">
+          <span class="product-cat">{{ product.category.name }}</span>
+          <h3 class="product-name"><a href="{{ url_for('product_detail', pid=product.id) }}">{{ product.name }}</a></h3>
+          <p class="product-desc">{{ product.description | truncate(80) }}</p>
+          <div class="product-bottom">
+            <div class="product-price">
+              <span class="price-main">{{ "%.0f"|format(product.price * 135) }} DA</span>
+            </div>
+            <div class="product-stock {% if product.stock > 10 %}in-stock{% elif product.stock > 0 %}low-stock{% else %}out-stock{% endif %}">
+              {% if product.stock > 10 %}<i class="fa fa-check-circle"></i> In Stock
+              {% elif product.stock > 0 %}<i class="fa fa-exclamation-circle"></i> Low Stock
+              {% else %}<i class="fa fa-times-circle"></i> Out of Stock{% endif %}
+            </div>
+          </div>
+          <button class="btn-add-cart {% if product.stock == 0 %}disabled{% endif %}"
+                  onclick="addToCart({{ product.id }}, '{{ product.name }}', {{ product.price }}, '{{ product.image_url }}')"
+                  {% if product.stock == 0 %}disabled{% endif %}>
+            <i class="fa fa-cart-plus"></i>
+            {% if product.stock == 0 %}Out of Stock{% else %}Add to Cart{% endif %}
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- PROMO BANNER -->
+<section class="promo-banner">
+  <div class="container promo-inner">
+    <div class="promo-content">
+      <span class="promo-badge">Limited Offer</span>
+      <h2>Bénéficiez de 15% sur votre Première Commande</h2>
+      <p>Utilisez le code <strong>AGRO15</strong> lors du paiement. Valable pour les nouveaux clients uniquement.</p>
+      <a href="{{ url_for('register') }}" class="btn-promo">S'inscrire et Économiser</a>
+    </div>
+    <div class="promo-image">
+      <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=500&q=80" alt="Farm">
+    </div>
+  </div>
+</section>
+
+<!-- NEW ARRIVALS -->
+<section class="section-products section-alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge"><i class="fa fa-bolt"></i> Tout Frais</span>
+      <h2 class="section-title">Nouveautés</h2>
+      <a href="{{ url_for('products', sort='newest') }}" class="see-all">Tout voir <i class="fa fa-arrow-right"></i></a>
+    </div>
+    <div class="products-grid">
+      {% for product in new_arrivals %}
+      <div class="product-card">
+        <div class="product-img-wrap">
+          <a href="{{ url_for('product_detail', pid=product.id) }}">
+            <img src="{{ product.image_url or 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=80' }}" alt="{{ product.name }}">
+          </a>
+          <div class="product-badges">
+            <span class="badge-new">New</span>
+          </div>
+          <div class="product-actions-hover">
+            <button class="btn-wishlist"><i class="fa fa-heart"></i></button>
+            <a href="{{ url_for('product_detail', pid=product.id) }}" class="btn-quickview"><i class="fa fa-eye"></i></a>
+          </div>
+        </div>
+        <div class="product-info">
+          <span class="product-cat">{{ product.category.name }}</span>
+          <h3 class="product-name"><a href="{{ url_for('product_detail', pid=product.id) }}">{{ product.name }}</a></h3>
+          <p class="product-desc">{{ product.description | truncate(80) }}</p>
+          <div class="product-bottom">
+            <div class="product-price">
+              <span class="price-main">{{ "%.0f"|format(product.price * 135) }} DA</span>
+            </div>
+            <div class="product-stock {% if product.stock > 10 %}in-stock{% elif product.stock > 0 %}low-stock{% else %}out-stock{% endif %}">
+              {% if product.stock > 10 %}<i class="fa fa-check-circle"></i> In Stock
+              {% elif product.stock > 0 %}<i class="fa fa-exclamation-circle"></i> Low Stock
+              {% else %}<i class="fa fa-times-circle"></i> Out of Stock{% endif %}
+            </div>
+          </div>
+          <button class="btn-add-cart {% if product.stock == 0 %}disabled{% endif %}"
+                  onclick="addToCart({{ product.id }}, '{{ product.name }}', {{ product.price }}, '{{ product.image_url }}')"
+                  {% if product.stock == 0 %}disabled{% endif %}>
+            <i class="fa fa-cart-plus"></i>
+            {% if product.stock == 0 %}Out of Stock{% else %}Add to Cart{% endif %}
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge"><i class="fa fa-quote-right"></i> Reviews</span>
+      <h2 class="section-title">Ce que Disent les Agriculteurs</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div>
+        <p>"L'engrais NPK commandé a donné à ma culture de blé le meilleur rendement en 10 ans. Livraison rapide en plus !"</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">JM</div>
+          <div><strong>Karim Bensalem</strong><small>Agriculteur céréalier, Sétif</small></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div>
+        <p>"Les meilleures semences que j'ai jamais plantées. Taux de germination de 98%. Je recommanderai sans hésiter."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">SF</div>
+          <div><strong>Fatima Aït Ouali</strong><small>Maraîchère, Blida</small></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-alt"></i></div>
+        <p>"AgroShop a complètement changé ma façon de me approvisionner. Excellents prix et excellent support."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">AK</div>
+          <div><strong>Mohamed Benali</strong><small>Phoeniciculteur, Biskra</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

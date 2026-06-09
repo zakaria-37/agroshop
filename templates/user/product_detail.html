@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} – AgroShop{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="container">
+    <nav class="breadcrumb">
+      <a href="{{ url_for('index') }}">Accueil</a><span>/</span>
+      <a href="{{ url_for('products') }}">Produits</a><span>/</span>
+      <a href="{{ url_for('products', category=product.category.slug) }}">{{ product.category.name }}</a><span>/</span>
+      <span>{{ product.name }}</span>
+    </nav>
+  </div>
+</div>
+
+<div class="container product-detail-page">
+  <div class="product-detail-grid">
+    <!-- Images -->
+    <div class="detail-images">
+      <div class="main-image">
+        <img id="mainImg" src="{{ product.image_url or 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80' }}" alt="{{ product.name }}">
+        {% if product.featured %}
+          <div class="detail-badge"><i class="fa fa-star"></i> Vedette</div>
+        {% endif %}
+      </div>
+      <div class="thumb-images">
+        <img src="{{ product.image_url or 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=150&q=80' }}" class="thumb active" onclick="setMainImg(this)">
+        <img src="https://images.unsplash.com/photo-1585059895524-72359e06133a?w=150&q=80" class="thumb" onclick="setMainImg(this)">
+        <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=150&q=80" class="thumb" onclick="setMainImg(this)">
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="detail-info">
+      <span class="detail-cat-badge"><i class="fa {{ product.category.icon }}"></i> {{ product.category.name }}</span>
+      <h1 class="detail-name">{{ product.name }}</h1>
+
+      <div class="detail-meta">
+        <div class="detail-rating">
+          <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-alt"></i>
+          <span>4.5 (42 avis)</span>
+        </div>
+        <span class="detail-sku">SKU: AGR-{{ "%04d"|format(product.id) }}</span>
+      </div>
+
+      <div class="detail-price">
+        <span class="detail-price-main">{{ "%.0f"|format(product.price * 135) }} DA</span>
+        <span class="detail-price-old">{{ "%.0f"|format(product.price * 1.15 * 135) }} DA</span>
+        <span class="detail-discount">Économisez 15%</span>
+      </div>
+
+      <div class="detail-stock {% if product.stock > 10 %}in-stock{% elif product.stock > 0 %}low-stock{% else %}out-stock{% endif %}">
+        {% if product.stock > 10 %}
+          <i class="fa fa-check-circle"></i> En Stock ({{ product.stock }} disponibles)
+        {% elif product.stock > 0 %}
+          <i class="fa fa-exclamation-circle"></i> Stock Limité (plus que {{ product.stock }} !)
+        {% else %}
+          <i class="fa fa-times-circle"></i> Rupture de Stock
+        {% endif %}
+      </div>
+
+      <div class="detail-desc">
+        <p>{{ product.description }}</p>
+      </div>
+
+      <div class="detail-features">
+        <div class="detail-feature"><i class="fa fa-check"></i> Qualité Certifiée</div>
+        <div class="detail-feature"><i class="fa fa-check"></i> Testé par Experts</div>
+        <div class="detail-feature"><i class="fa fa-check"></i> Emballage Sécurisé</div>
+        <div class="detail-feature"><i class="fa fa-check"></i> Livraison Rapide</div>
+      </div>
+
+      {% if product.stock > 0 %}
+      <div class="detail-add-cart">
+        <div class="qty-control">
+          <button onclick="changeQty(-1)"><i class="fa fa-minus"></i></button>
+          <input type="number" id="qtyInput" value="1" min="1" max="{{ product.stock }}">
+          <button onclick="changeQty(1)"><i class="fa fa-plus"></i></button>
+        </div>
+        <button class="btn-add-cart-lg" onclick="addToCartQty({{ product.id }}, '{{ product.name }}', {{ product.price }}, '{{ product.image_url }}')">
+          <i class="fa fa-cart-plus"></i> Ajouter au Panier
+        </button>
+      </div>
+      <button class="btn-buy-now" onclick="addToCartQty({{ product.id }}, '{{ product.name }}', {{ product.price }}, '{{ product.image_url }}', true)">
+        <i class="fa fa-bolt"></i> Acheter Maintenant
+      </button>
+      {% else %}
+      <div class="out-of-stock-msg">
+        <i class="fa fa-clock"></i> Actuellement en rupture de stock. Revenez bientôt !
+        <button class="btn-notify"><i class="fa fa-bell"></i> Me Notifier</button>
+      </div>
+      {% endif %}
+
+      <div class="detail-meta-grid">
+        <div class="meta-item"><i class="fa fa-tag"></i><span>Catégorie :</span><strong>{{ product.category.name }}</strong></div>
+        <div class="meta-item"><i class="fa fa-truck"></i><span>Livraison :</span><strong>2-3 jours ouvrables</strong></div>
+        <div class="meta-item"><i class="fa fa-shield-alt"></i><span>Garantie :</span><strong>Satisfaction garantie</strong></div>
+      </div>
+
+      <div class="share-section">
+        <span>Partager :</span>
+        <a href="#" class="share-btn fb"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="share-btn tw"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="share-btn wa"><i class="fab fa-whatsapp"></i></a>
+        <button class="share-btn copy" onclick="copyLink()"><i class="fa fa-link"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Tabs -->
+  <div class="product-tabs">
+    <div class="tab-headers">
+      <button class="tab-btn active" onclick="showTab('desc', this)">Description</button>
+      <button class="tab-btn" onclick="showTab('usage', this)">Guide d'Utilisation</button>
+      <button class="tab-btn" onclick="showTab('reviews', this)">Avis (42)</button>
+    </div>
+    <div class="tab-content" id="tab-desc">
+      <h3>Description du Produit</h3>
+      <p>{{ product.description }}</p>
+      <p>Nos produits subissent des tests de qualité rigoureux avant d'atteindre votre exploitation. Chaque lot est testé pour sa pureté, son efficacité et sa conformité aux normes agricoles internationales.</p>
+    </div>
+    <div class="tab-content hidden" id="tab-usage">
+      <h3>Instructions d'Utilisation</h3>
+      <ul class="usage-list">
+        <li><i class="fa fa-check"></i> Lire attentivement l'étiquette avant utilisation</li>
+        <li><i class="fa fa-check"></i> Conserver dans un endroit frais et sec, à l'abri de la lumière directe</li>
+        <li><i class="fa fa-check"></i> Tenir hors de portée des enfants</li>
+        <li><i class="fa fa-check"></i> Respecter les doses recommandées pour de meilleurs résultats</li>
+        <li><i class="fa fa-check"></i> Porter des équipements de protection lors des traitements</li>
+      </ul>
+    </div>
+    <div class="tab-content hidden" id="tab-reviews">
+      <h3>Avis Clients</h3>
+      <div class="reviews-list">
+        <div class="review-item">
+          <div class="review-header">
+            <div class="reviewer-avatar">FM</div>
+            <div><strong>Fatima M.</strong><small>Achat Vérifié · il y a 2 semaines</small></div>
+            <div class="review-stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div>
+          </div>
+          <p>Excellent produit, exactement comme décrit. Mon rendement a nettement amélioré dès la première saison.</p>
+        </div>
+        <div class="review-item">
+          <div class="review-header">
+            <div class="reviewer-avatar">KO</div>
+            <div><strong>Karim O.</strong><small>Achat Vérifié · il y a 1 mois</small></div>
+            <div class="review-stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-alt"></i></div>
+          </div>
+          <p>Bonne qualité, livraison rapide. Je recommande à tout agriculteur souhaitant améliorer ses résultats.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Produits Similaires -->
+  {% if related %}
+  <div class="related-products">
+    <div class="section-header">
+      <h2 class="section-title">Produits Similaires</h2>
+    </div>
+    <div class="products-grid">
+      {% for rp in related %}
+      <div class="product-card">
+        <div class="product-img-wrap">
+          <a href="{{ url_for('product_detail', pid=rp.id) }}">
+            <img src="{{ rp.image_url or 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=80' }}" alt="{{ rp.name }}">
+          </a>
+        </div>
+        <div class="product-info">
+          <span class="product-cat">{{ rp.category.name }}</span>
+          <h3 class="product-name"><a href="{{ url_for('product_detail', pid=rp.id) }}">{{ rp.name }}</a></h3>
+          <div class="product-bottom">
+            <span class="price-main">{{ "%.0f"|format(rp.price * 135) }} DA</span>
+          </div>
+          <button class="btn-add-cart" onclick="addToCart({{ rp.id }}, '{{ rp.name }}', {{ rp.price }}, '{{ rp.image_url }}')">
+            <i class="fa fa-cart-plus"></i> Ajouter au Panier
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+function setMainImg(thumb){
+  document.getElementById('mainImg').src = thumb.src.replace('w=150','w=600');
+  document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+  thumb.classList.add('active');
+}
+function changeQty(delta){
+  const input = document.getElementById('qtyInput');
+  const val = parseInt(input.value) + delta;
+  input.value = Math.max(1, Math.min(parseInt(input.max), val));
+}
+function addToCartQty(id, name, price, img, buyNow=false){
+  const qty = parseInt(document.getElementById('qtyInput').value);
+  for(let i=0;i<qty;i++) addToCart(id, name, price, img);
+  if(buyNow){ toggleCart(); }
+}
+function showTab(id, btn){
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.remove('hidden');
+  btn.classList.add('active');
+}
+function copyLink(){
+  navigator.clipboard.writeText(window.location.href);
+  showToast('Lien copié !');
+}
+</script>
+{% endblock %}

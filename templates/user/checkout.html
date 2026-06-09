@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+{% block title %}Paiement – AgroShop{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1><i class="fa fa-shopping-cart"></i> Paiement</h1>
+    <nav class="breadcrumb"><a href="{{ url_for('index') }}">Accueil</a><span>/</span><span>Paiement</span></nav>
+  </div>
+</div>
+<div class="container checkout-page">
+  <div class="checkout-grid">
+    <div class="checkout-form-side">
+
+      <!-- Adresse de livraison -->
+      <div class="checkout-section">
+        <h3><i class="fa fa-map-marker-alt"></i> Adresse de Livraison</h3>
+        <div class="form-grid-2">
+          <div class="form-group"><label>Prénom</label><input type="text" id="firstName" placeholder="Mohamed"></div>
+          <div class="form-group"><label>Nom</label><input type="text" id="lastName" placeholder="Benali"></div>
+        </div>
+        <div class="form-group"><label>Adresse</label><input type="text" id="street" placeholder="Rue, N°, Cité..."></div>
+
+        <div class="form-grid-2">
+          <!-- Wilaya -->
+          <div class="form-group">
+            <label>Wilaya</label>
+            <select id="wilaya" onchange="onWilayaChange()">
+              <option value="">-- Choisir une wilaya --</option>
+              <optgroup label="🌿 Zone Nord (500 DA)">
+                <option value="Alger|NORD">01 – Alger</option>
+                <option value="Chlef|NORD">02 – Chlef</option>
+                <option value="Béjaïa|NORD">06 – Béjaïa</option>
+                <option value="Blida|NORD">09 – Blida</option>
+                <option value="Bouira|NORD">10 – Bouira</option>
+                <option value="Tébessa|NORD">12 – Tébessa</option>
+                <option value="Tlemcen|NORD">13 – Tlemcen</option>
+                <option value="Tizi Ouzou|NORD">15 – Tizi Ouzou</option>
+                <option value="Jijel|NORD">18 – Jijel</option>
+                <option value="Sétif|NORD">19 – Sétif</option>
+                <option value="Skikda|NORD">21 – Skikda</option>
+                <option value="Sidi Bel Abbès|NORD">22 – Sidi Bel Abbès</option>
+                <option value="Annaba|NORD">23 – Annaba</option>
+                <option value="Guelma|NORD">24 – Guelma</option>
+                <option value="Constantine|NORD">25 – Constantine</option>
+                <option value="Médéa|NORD">26 – Médéa</option>
+                <option value="Mostaganem|NORD">27 – Mostaganem</option>
+                <option value="Batna|NORD">05 – Batna</option>
+                <option value="Oum El Bouaghi|NORD">04 – Oum El Bouaghi</option>
+                <option value="Mascara|NORD">29 – Mascara</option>
+                <option value="Oran|NORD">31 – Oran</option>
+                <option value="Bordj Bou Arréridj|NORD">34 – Bordj Bou Arréridj</option>
+                <option value="Boumerdès|NORD">35 – Boumerdès</option>
+                <option value="El Tarf|NORD">36 – El Tarf</option>
+                <option value="Tissemsilt|NORD">38 – Tissemsilt</option>
+                <option value="Khenchela|NORD">40 – Khenchela</option>
+                <option value="Souk Ahras|NORD">41 – Souk Ahras</option>
+                <option value="Tipaza|NORD">42 – Tipaza</option>
+                <option value="Mila|NORD">43 – Mila</option>
+                <option value="Aïn Defla|NORD">44 – Aïn Defla</option>
+                <option value="Aïn Témouchent|NORD">46 – Aïn Témouchent</option>
+                <option value="Relizane|NORD">48 – Relizane</option>
+              </optgroup>
+              <optgroup label="🌾 Hauts Plateaux (700 DA)">
+                <option value="Laghouat|HP">03 – Laghouat</option>
+                <option value="Biskra|HP">07 – Biskra</option>
+                <option value="Tiaret|HP">14 – Tiaret</option>
+                <option value="Djelfa|HP">17 – Djelfa</option>
+                <option value="Saïda|HP">20 – Saïda</option>
+                <option value="M'Sila|HP">28 – M'Sila</option>
+                <option value="Ouargla|HP">30 – Ouargla</option>
+                <option value="El Bayadh|HP">32 – El Bayadh</option>
+                <option value="El Oued|HP">39 – El Oued</option>
+                <option value="Ghardaïa|HP">47 – Ghardaïa</option>
+                <option value="Naâma|HP">45 – Naâma</option>
+                <option value="Ouled Djellal|HP">51 – Ouled Djellal</option>
+                <option value="Touggourt|HP">55 – Touggourt</option>
+                <option value="El M'Ghair|HP">57 – El M'Ghair</option>
+                <option value="El Meniaa|HP">58 – El Meniaa</option>
+              </optgroup>
+              <optgroup label="🏜️ Zone Sud (1 000 DA)">
+                <option value="Adrar|SUD">01 – Adrar</option>
+                <option value="Béchar|SUD">08 – Béchar</option>
+                <option value="Tamanrasset|SUD">11 – Tamanrasset</option>
+                <option value="Illizi|SUD">33 – Illizi</option>
+                <option value="Tindouf|SUD">37 – Tindouf</option>
+                <option value="Timimoun|SUD">49 – Timimoun</option>
+                <option value="Bordj Badji Mokhtar|SUD">50 – Bordj Badji Mokhtar</option>
+                <option value="Béni Abbès|SUD">52 – Béni Abbès</option>
+                <option value="In Salah|SUD">53 – In Salah</option>
+                <option value="In Guezzam|SUD">54 – In Guezzam</option>
+                <option value="Djanet|SUD">56 – Djanet</option>
+              </optgroup>
+            </select>
+            <!-- Indicateur zone -->
+            <div id="zoneIndicator" style="display:none;margin-top:7px;padding:8px 12px;border-radius:8px;font-size:0.82rem;font-weight:600"></div>
+          </div>
+          <!-- Commune dynamique -->
+          <div class="form-group">
+            <label>Commune</label>
+            <select id="commune" disabled>
+              <option value="">-- Choisir la wilaya d'abord --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group"><label>Code Postal</label><input type="text" id="postal" placeholder="16000"></div>
+          <div class="form-group"><label>Téléphone</label><input type="tel" id="phone" placeholder="05XX XX XX XX"></div>
+        </div>
+      </div>
+
+      <!-- Paiement -->
+      <div class="checkout-section">
+        <h3><i class="fa fa-money-bill-wave"></i> Méthode de Paiement</h3>
+        <div class="payment-methods">
+          <label class="payment-option active">
+            <input type="radio" name="payment" value="cod" checked>
+            <i class="fa fa-money-bill-wave"></i> Paiement à la Livraison (Cash)
+          </label>
+        </div>
+        <p style="margin-top:10px;font-size:13px;color:#666">
+          <i class="fa fa-info-circle"></i> Vous payez en espèces à la réception de votre commande.
+        </p>
+      </div>
+    </div>
+
+    <!-- Récapitulatif commande -->
+    <div class="checkout-summary">
+      <h3><i class="fa fa-receipt"></i> Récapitulatif</h3>
+      <div id="checkoutItems" class="checkout-items-list"></div>
+
+      <div class="checkout-totals">
+        <div class="total-row"><span>Sous-total</span><span id="checkoutSubtotal">0 DA</span></div>
+        <div class="total-row">
+          <span>Livraison</span>
+          <span id="checkoutShipping" style="color:#2e7d32;font-weight:700">—</span>
+        </div>
+        <div class="total-row total-grand">
+          <span>Total</span>
+          <strong id="checkoutTotal">0 DA</strong>
+        </div>
+      </div>
+
+      <!-- Barre livraison gratuite -->
+      <div id="freeShipSection" style="margin:12px 0;padding:12px;background:#f8faf8;border-radius:9px;border:1px solid #e8f5e9">
+        <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:6px">
+          <span style="font-weight:600;color:#2e7d32"><i class="fa fa-gift"></i> Livraison offerte dès 30 000 DA</span>
+          <span id="freeShipMsg" style="color:#888"></span>
+        </div>
+        <div style="height:6px;background:#e8f5e9;border-radius:50px;overflow:hidden">
+          <div id="freeShipBar" style="height:100%;background:linear-gradient(90deg,#66bb6a,#2e7d32);border-radius:50px;width:0%;transition:width 0.4s"></div>
+        </div>
+      </div>
+
+      <button class="btn-place-order" onclick="placeOrder()" id="placeOrderBtn">
+        <i class="fa fa-check-circle"></i> Confirmer la Commande
+      </button>
+      <div class="secure-icons"><i class="fa fa-lock"></i> Paiement sécurisé à la livraison</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal succès -->
+<div class="modal-overlay" id="successModal" style="display:none">
+  <div class="modal-box success-modal">
+    <div class="success-icon"><i class="fa fa-check-circle"></i></div>
+    <h2>Commande Confirmée !</h2>
+    <p>Votre commande a été passée avec succès.</p>
+    <p>Vous serez contacté(e) pour la livraison.</p>
+    <p id="successOrderId" style="font-weight:700;color:#2e7d32;font-size:1.1rem;margin-top:8px"></p>
+    <div class="modal-actions">
+      <a href="{{ url_for('my_orders') }}" class="btn-primary-sm">Mes Commandes</a>
+      <a href="{{ url_for('products') }}" class="btn-outline-sm">Continuer</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ────────────────────────────────────────────────────────────────────────────
+// Tarifs livraison par zone
+// ────────────────────────────────────────────────────────────────────────────
+const SHIPPING_RATES = {
+  'NORD': { price: 500,  label: '🌿 Zone Nord',        color: '#e8f5e9', text: '#2e7d32' },
+  'HP':   { price: 700,  label: '🌾 Hauts Plateaux',   color: '#fff8e1', text: '#e65100' },
+  'SUD':  { price: 1000, label: '🏜️ Zone Sud',         color: '#fce4ec', text: '#c62828' },
+};
+const FREE_THRESHOLD = 30000;
+
+// ────────────────────────────────────────────────────────────────────────────
+// Communes par wilaya
+// ────────────────────────────────────────────────────────────────────────────
+const COMMUNES = {
+  "Alger":["Alger Centre","Sidi M'Hamed","El Madania","Belouizdad","Bab El Oued","Bologhine","Casbah","Oued Koriche","Birmandreis","El Harrach","Baraki","Oued Smar","Bachdjarrah","Hussein Dey","Kouba","Bourouba","Dar El Beïda","Bab Ezzouar","Ben Aknoun","Dely Ibrahim","Rahmania","Souidania","Cheraga","Ain Benian","Rais Hamidou","Hammamet","Staoueli","Zeralda","Mahelma","El Marsa","Aïn Taya","Bordj El Kiffan","El Magharia","Rouiba","Reghaïa","Bouchaoui","Ouled Chebel","Sidi Moussa","Tessala El Merdja","Birtouta"],
+  "Chlef":["Chlef","Ténès","Benairia","El Karimia","Taougrite","Beni Haoua","Sobha","Harchoun","Ouled Fares","Sidi Abderrahmane","Oued Fodda","El Hadjadj","Abou El Hassan","Sendjas","El Marsa","Ain Merane","Chorfa","Bouzeghaia"],
+  "Laghouat":["Laghouat","Ksar El Hirane","Benoud","Aïn Madhi","Tadjmout","Hassi Délaa","Hassi R'Mel","Aflou","Sidi Makhlouf","Brida"],
+  "Oum El Bouaghi":["Oum El Bouaghi","Aïn Beïda","Aïn M'lila","Aïn Fakroun","Souk Naamane","Aïn Kercha","El Amiria","Sigus","Ouled Hamla","Ain Diss","Fkirina"],
+  "Batna":["Batna","Aïn Touta","Barika","Merouana","Seriana","El Madher","Tazoult","Ngaous","Fesdis","Boulhilet","Oued El Ma","Menaa","Lazrou","Tilatou","Aïn Yagout"],
+  "Béjaïa":["Béjaïa","Kherrata","Sidi Aïch","El Kseur","Amizour","Akbou","Aokas","Seddouk","Tazmalt","Adekar","Oued Ghir","Barbacha","Souk El Tenine"],
+  "Biskra":["Biskra","Ouled Djellal","Sidi Okba","Tolga","Djamaa","Aïn Naga","Zeribet El Oued","Foughala","El Ghrous","Chetma","Lioua","Lichana","Oumache"],
+  "Béchar":["Béchar","Kenadsa","Beni Abbès","Lahmar","Méridja","Igli","Tabelbala","Taghit","Ksabi","Timoudi"],
+  "Blida":["Blida","Meftah","Larbaa","Ouled Yaïch","Chebli","Bougara","Soumaa","Mouzaia","El Affroun","Chiffa","Hammam Melouane","Oued El Alleug"],
+  "Bouira":["Bouira","Lakhdaria","M'Chedallah","Sour El Ghouzlane","Haizer","Ain Bessam","El Adjiba","Kadiria","Zbarbar","Boukram"],
+  "Tamanrasset":["Tamanrasset","Abalessa","In Ghar","In Guezzam","Tin Zaouatine","Tazrouk","Idles","Silet"],
+  "Tébessa":["Tébessa","Bir El Ater","Cheria","El Aouinet","Negrine","Ouenza","Bekkaria","Boukhadra","Ferkane","El Kouif"],
+  "Tlemcen":["Tlemcen","Nedroma","Ghazaouet","Remchi","Sebdou","Maghnia","Chetouane","Mansourah","Bensekrane","Ain Youcef"],
+  "Tiaret":["Tiaret","Frenda","Ain Bouchekif","Sougueur","Ksar Chellala","Rahouia","Hamadia","Dahmouni","Takhemaret"],
+  "Tizi Ouzou":["Tizi Ouzou","Azazga","Aïn El Hammam","Draa Ben Khedda","Draa El Mizan","Ouaguenoun","Bouzeguène","Tigzirt","Larbaa Nath Irathen","Boghni","Makouda","Maatkas"],
+  "Djelfa":["Djelfa","Ain Oussara","Moudjbara","El Idrissia","Birine","Hassi Bahbah","Ain Maabed","Dar Chioukh","Charef"],
+  "Jijel":["Jijel","Taher","El Aouana","Chekfa","El Milia","El Ancer","Texenna","Erraguene","Settara"],
+  "Sétif":["Sétif","El Eulma","Aïn Oulmène","Aïn Arnat","Hammam Guergour","Guidjel","Bir El Arch","Salah Bey","Hammam Soukhna","Bougaa","Djemila"],
+  "Saïda":["Saïda","Aïn El Hadjar","Ouled Brahim","Sidi Boubekeur","El Hassasna","El Breidj"],
+  "Skikda":["Skikda","El Harrouch","Collo","Tamalous","Ramdane Djamel","Aïn El Hadaiek","El Marsa"],
+  "Sidi Bel Abbès":["Sidi Bel Abbès","Telagh","Tessala","Sidi Ali Benyoub","Ain El Berd","Ben Badis","Marhoum","Boukhanafis"],
+  "Annaba":["Annaba","El Bouni","El Hadjar","Aïn Berda","Berrahal","Seraïdi","Sidi Amar"],
+  "Guelma":["Guelma","Bouchegouf","Héliopolis","Oued Zenati","Tamlouka","Hamma","Ain Makhlouf","Boumahra Ahmed"],
+  "Constantine":["Constantine","El Khroub","Aïn Abid","Didouche Mourad","Hamma Bouziane","Ouled Rahmoune","Zighoud Youcef"],
+  "Médéa":["Médéa","Berrouaghia","Tablat","Ksar El Boukhari","El Omaria","Beni Slimane","Rebaia","Ben Chicao","Ouzera"],
+  "Mostaganem":["Mostaganem","Aïn Tédelès","Mesra","Achaâcha","Mazagran","Stidia","Bouguirat"],
+  "M'Sila":["M'Sila","Bou Saâda","Sidi Aïssa","Aïn El Melh","Aïn El Hadjel","El Hamel","Hammam Dalaa"],
+  "Mascara":["Mascara","Tighennif","Sig","Hacine","Ghriss","Oggaz","Froha","Zahana"],
+  "Ouargla":["Ouargla","Touggourt","El Hadjira","Hassi Messaoud","Rouissat","N'Goussa","Blidet Amor"],
+  "Oran":["Oran","Es Sénia","Bir El Djir","Aïn El Turck","Arzew","Bethioua","Gdyel","Oued Tlélat"],
+  "El Bayadh":["El Bayadh","Rogassa","Brezina","El Abiodh Sidi Cheikh","Bougtob","Boualem"],
+  "Illizi":["Illizi","Djanet","In Amenas","Debdeb"],
+  "Bordj Bou Arréridj":["Bordj Bou Arréridj","El Hamadia","Ras El Oued","Bir Kasdali","Bordj Ghedir","Ain Taghrout","Djaafra"],
+  "Boumerdès":["Boumerdès","Bordj Menaïel","Khemis El Khechna","Boudouaou","Isser","Si Mustapha","Zemmouri","Naciria","Djinet","Ouled Moussa","Thenia","Tidjelabine"],
+  "El Tarf":["El Tarf","El Kala","Ben Mehidi","Bouteldja","Aïn El Assel","Dréan","Besbes","El Aioun"],
+  "Tindouf":["Tindouf","Oum El Assel"],
+  "Tissemsilt":["Tissemsilt","Khemisti","Lardjem","Theniet El Had","Layoune","Sidi Lantri"],
+  "El Oued":["El Oued","Robbah","Guemar","Kouinine","Reguiba","Debila","Mrara","Sidi Aoun","Tendla"],
+  "Khenchela":["Khenchela","Aïn Touila","Baghaï","El Hamma","Chechar","Bouhmama"],
+  "Souk Ahras":["Souk Ahras","Sedrata","Merahna","Ouled Driss","Tiffech","Hanancha","Mechroha"],
+  "Tipaza":["Tipaza","Hadjout","Bou Ismaïl","Koléa","Fouka","Cherchell","Damous","Meurad","Gouraya"],
+  "Mila":["Mila","Chelghoum Laïd","Ferdjioua","Tadjenanet","Rouached","Grarem Gouga","Teleghma"],
+  "Aïn Defla":["Aïn Defla","Miliana","Khemis Miliana","El Attaf","Hammam Righa","Djendel","Rouina"],
+  "Naâma":["Naâma","Mecheria","Ain Sefra","Tiout","Sfissfa","Moghrar","El Biod"],
+  "Aïn Témouchent":["Aïn Témouchent","Hammam Bou Hadjar","Beni Saf","El Malah","Ain Tolba","Oulhaça El Gheraba"],
+  "Ghardaïa":["Ghardaïa","Metlili","El Guerrara","Berriane","Bounoura","Zelfana","El Atteuf"],
+  "Relizane":["Relizane","Ammi Moussa","Mohammadia","Mazouna","Oued Rhiou","Djidioua","El Guettar"],
+  "Timimoun":["Timimoun","Charouine","Ouled Said","Aougrout"],
+  "Bordj Badji Mokhtar":["Bordj Badji Mokhtar","Timiaouine"],
+  "Ouled Djellal":["Ouled Djellal","Sidi Khaled","Doucen","El Ghrous"],
+  "Béni Abbès":["Béni Abbès","Igli","Kerzaz","Ksabi","Timoudi"],
+  "In Salah":["In Salah","Foggaret Ez Zoua","In Ghar","Aoulef"],
+  "In Guezzam":["In Guezzam","Tin Zaouatine"],
+  "Touggourt":["Touggourt","Temacine","Blidet Amor","El Hadjira","Nezla","Megarine"],
+  "Djanet":["Djanet","Bordj El Haouas"],
+  "El M'Ghair":["El M'Ghair","Djamaa","Still","Mrara"],
+  "El Meniaa":["El Meniaa","Hassi Gara","Berezga"],
+  "Adrar":["Adrar","Aoulef","Timimoun","Reggane","Zaouiet Kounta","Fenoughil","Tsabit","Akabli","Ain Salah"],
+  "Béchar":["Béchar","Kenadsa","Beni Abbès","Lahmar","Méridja","Igli","Tabelbala","Taghit","Ksabi"]
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+// Changement wilaya
+// ────────────────────────────────────────────────────────────────────────────
+function onWilayaChange() {
+  const sel   = document.getElementById('wilaya');
+  const val   = sel.value; // ex: "Alger|NORD"
+  const parts = val.split('|');
+  const name  = parts[0];
+  const zone  = parts[1];
+
+  // Charger communes
+  loadCommunes(name);
+
+  // Indicateur zone
+  const indicator = document.getElementById('zoneIndicator');
+  if (!zone) { indicator.style.display = 'none'; }
+  else {
+    const r = SHIPPING_RATES[zone];
+    indicator.style.display = 'flex';
+    indicator.style.background = r.color;
+    indicator.style.color = r.text;
+    // Calculer si livraison gratuite
+    const cart = getCart();
+    const subtotal = cart.reduce((a,i) => a + i.price * i.qty, 0);
+    const isFree = subtotal >= FREE_THRESHOLD;
+    indicator.innerHTML = `<i class="fa fa-truck"></i>&nbsp; ${r.label} — 
+      <span style="${isFree?'text-decoration:line-through':''}">${r.price.toLocaleString('fr-DZ')} DA</span>
+      ${isFree ? ' &nbsp;→ <strong>GRATUIT 🎉</strong>' : ''}`;
+  }
+
+  // Recalculer totaux
+  updateCheckoutTotals();
+}
+
+function loadCommunes(wilayaName) {
+  const sel = document.getElementById('commune');
+  sel.innerHTML = '';
+  if (!wilayaName || !COMMUNES[wilayaName]) {
+    sel.innerHTML = '<option value="">-- Choisir la wilaya d\'abord --</option>';
+    sel.disabled = true;
+    return;
+  }
+  const defOpt = document.createElement('option');
+  defOpt.value = ''; defOpt.textContent = '-- Choisir une commune --';
+  sel.appendChild(defOpt);
+  COMMUNES[wilayaName].forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = c;
+    sel.appendChild(opt);
+  });
+  sel.disabled = false;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Recalcul totaux
+// ────────────────────────────────────────────────────────────────────────────
+function formatDA(n) { return Math.round(n).toLocaleString('fr-DZ') + ' DA'; }
+
+function getSelectedZone() {
+  const val = document.getElementById('wilaya').value;
+  return val ? val.split('|')[1] : null;
+}
+
+function updateCheckoutTotals() {
+  const cart     = getCart();
+  const subtotal = cart.reduce((a,i) => a + i.price * i.qty, 0);
+  const zone     = getSelectedZone();
+  const isFree   = subtotal >= FREE_THRESHOLD;
+  let shipping   = 0;
+
+  // Barre progrès
+  const pct = Math.min(100, (subtotal / FREE_THRESHOLD) * 100);
+  document.getElementById('freeShipBar').style.width = pct + '%';
+  if (isFree) {
+    document.getElementById('freeShipMsg').innerHTML = '<strong style="color:#2e7d32">🎉 Livraison offerte !</strong>';
+  } else {
+    const remain = FREE_THRESHOLD - subtotal;
+    document.getElementById('freeShipMsg').textContent = 'Plus que ' + formatDA(remain);
+  }
+
+  // Livraison
+  const shippingEl = document.getElementById('checkoutShipping');
+  if (isFree) {
+    shipping = 0;
+    const oldPrice = zone ? SHIPPING_RATES[zone].price.toLocaleString('fr-DZ') + ' DA' : '—';
+    shippingEl.innerHTML = `<span style="text-decoration:line-through;color:#aaa;font-size:0.8rem">${oldPrice}</span> <strong style="color:#2e7d32">GRATUIT 🎉</strong>`;
+  } else if (zone) {
+    shipping = SHIPPING_RATES[zone].price;
+    shippingEl.textContent = formatDA(shipping);
+    shippingEl.style.color = '#e65100';
+  } else {
+    shippingEl.innerHTML = '<span style="color:#e65100;font-size:0.8rem"><i class="fa fa-exclamation-circle"></i> Choisir une wilaya</span>';
+  }
+
+  document.getElementById('checkoutSubtotal').textContent = formatDA(subtotal);
+  document.getElementById('checkoutTotal').textContent    = formatDA(subtotal + shipping);
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Init page
+// ────────────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const cart = getCart();
+  if (!cart || cart.length === 0) { window.location.href = '{{ url_for("products") }}'; return; }
+
+  const container = document.getElementById('checkoutItems');
+  cart.forEach(item => {
+    const lineTotal = item.price * item.qty;
+    container.innerHTML += `<div class="checkout-item">
+      <img src="${item.image || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=60&q=80'}" alt="${item.name}">
+      <div class="checkout-item-info">
+        <span>${item.name}</span>
+        <small>Qté : ${item.qty} × ${formatDA(item.price)}</small>
+      </div>
+      <strong>${formatDA(lineTotal)}</strong>
+    </div>`;
+  });
+
+  updateCheckoutTotals();
+});
+
+// ────────────────────────────────────────────────────────────────────────────
+// Confirmation commande
+// ────────────────────────────────────────────────────────────────────────────
+async function placeOrder() {
+  const btn       = document.getElementById('placeOrderBtn');
+  const cart      = getCart();
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName  = document.getElementById('lastName').value.trim();
+  const street    = document.getElementById('street').value.trim();
+  const wilayaVal = document.getElementById('wilaya').value;
+  const commune   = document.getElementById('commune').value;
+  const postal    = document.getElementById('postal').value.trim();
+  const phone     = document.getElementById('phone').value.trim();
+
+  // Validations
+  if (!firstName || !lastName) { showToast('Veuillez renseigner prénom et nom', 'error'); return; }
+  if (!wilayaVal)               { showToast('Veuillez choisir votre wilaya', 'error'); return; }
+  if (!commune)                 { showToast('Veuillez choisir votre commune', 'error'); return; }
+  if (!phone)                   { showToast('Veuillez renseigner votre téléphone', 'error'); return; }
+
+  const wilayaName = wilayaVal.split('|')[0];
+  const zone       = wilayaVal.split('|')[1];
+  const subtotal   = cart.reduce((a,i) => a + i.price * i.qty, 0);
+  const isFree     = subtotal >= FREE_THRESHOLD;
+  const shipping   = isFree ? 0 : SHIPPING_RATES[zone].price;
+  const addr = [firstName, lastName, street, commune, wilayaName, postal, phone,
+                `Livraison: ${isFree ? 'GRATUITE' : formatDA(shipping)}`].filter(Boolean).join(' | ');
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Traitement en cours...';
+
+  try {
+    const res = await fetch('/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: cart.map(i => ({ id: i.id, qty: i.qty })), address: addr })
+    });
+    const data = await res.json();
+    if (data.success) {
+      clearCart();
+      document.getElementById('successOrderId').textContent = 'Commande N° ' + data.order_id;
+      document.getElementById('successModal').style.display = 'flex';
+    } else {
+      showToast(data.message || 'Échec de la commande', 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa fa-check-circle"></i> Confirmer la Commande';
+    }
+  } catch(e) {
+    showToast('Une erreur est survenue', 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa fa-check-circle"></i> Confirmer la Commande';
+  }
+}
+</script>
+{% endblock %}

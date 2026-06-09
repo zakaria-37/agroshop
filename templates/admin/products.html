@@ -1,0 +1,231 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Produits – AgroShop Admin{% endblock %}
+{% block page_title %}<i class="fa fa-box"></i> Gestion des Produits{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+  <div>
+    <p style="color:#888;font-size:0.88rem;margin-top:4px">{{ products|length }} produit(s) au total</p>
+  </div>
+  <button class="btn-admin btn-green" onclick="document.getElementById('addModal').classList.add('open')">
+    <i class="fa fa-plus"></i> Ajouter un Produit
+  </button>
+</div>
+
+<!-- Barre de recherche -->
+<div class="admin-form-card" style="margin-bottom:20px;padding:16px 20px">
+  <div class="filter-bar">
+    <div class="search-input-wrap" style="flex:1">
+      <i class="fa fa-search"></i>
+      {# CORRECTION 1 : suppression du oninput inline — écouté via JS en bas de page #}
+      <input type="text" class="form-control" id="searchInput" placeholder="Rechercher un produit..." style="padding-left:34px">
+    </div>
+    <select class="form-control" id="catFilter" style="width:200px">
+      <option value="">Toutes les catégories</option>
+      {% for cat in categories %}
+      <option value="{{ cat.name }}">{{ cat.name }}</option>
+      {% endfor %}
+    </select>
+    <select class="form-control" id="stockFilter" style="width:160px">
+      <option value="">Tout le stock</option>
+      <option value="in">En stock</option>
+      <option value="out">Rupture</option>
+    </select>
+  </div>
+</div>
+
+<!-- Tableau produits -->
+<div class="admin-table-card">
+  <div style="overflow-x:auto">
+    <table id="productsTable">
+      <thead>
+        <tr>
+          <th>Produit</th>
+          <th>Catégorie</th>
+          <th>Prix</th>
+          <th>Stock</th>
+          <th>Vedette</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        {# CORRECTION 2 : utilisation de product.name|lower|e pour éviter les guillemets cassants dans data-name #}
+        <tr data-name="{{ product.name|lower|e }}" data-cat="{{ product.category.name|e }}" data-stock="{{ product.stock }}">
+          <td>
+            <div style="display:flex;align-items:center;gap:12px">
+              {# CORRECTION 3 : image_url peut être None/vide — utilisation du filtre default() de Jinja2 #}
+              <img src="{{ product.image_url|default('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=60&q=80', true) }}"
+                   style="width:48px;height:48px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb" alt="{{ product.name|e }}">
+              <div>
+                <strong style="font-size:0.88rem">{{ product.name }}</strong>
+                <div style="font-size:0.75rem;color:#888;margin-top:2px">ID #{{ product.id }}</div>
+              </div>
+            </div>
+          </td>
+          <td><span style="background:#e8f5e9;color:#2e7d32;padding:3px 10px;border-radius:50px;font-size:0.75rem;font-weight:600">{{ product.category.name }}</span></td>
+          <td><strong style="color:#2e7d32">{{ "%.0f"|format(product.price) }} DA</strong></td>
+          <td>
+            {% if product.stock > 10 %}
+              <span style="color:#2e7d32;font-weight:600"><i class="fa fa-check-circle"></i> {{ product.stock }}</span>
+            {% elif product.stock > 0 %}
+              <span style="color:#e65100;font-weight:600"><i class="fa fa-exclamation-circle"></i> {{ product.stock }}</span>
+            {% else %}
+              <span style="color:#c62828;font-weight:600"><i class="fa fa-times-circle"></i> Rupture</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if product.featured %}
+              <span style="color:#f9a825"><i class="fa fa-star"></i> Oui</span>
+            {% else %}
+              <span style="color:#ccc"><i class="fa fa-star"></i> Non</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display:flex;gap:6px">
+              {#
+                CORRECTION 4 : le onclick du bouton Modifier contenait des guillemets imbriqués
+                mal échappés (replace("'", "\\'") avec des guillemets doubles à l'intérieur de
+                l'attribut HTML onclick="..."). Déplacé dans un data-* + appel JS propre.
+              #}
+              <button class="btn-admin btn-blue btn-sm"
+                data-id="{{ product.id }}"
+                data-name="{{ product.name|e }}"
+                data-price="{{ product.price }}"
+                data-stock="{{ product.stock }}"
+                data-image="{{ product.image_url|default('', true)|e }}"
+                data-cat="{{ product.category_id }}"
+                data-featured="{{ 'true' if product.featured else 'false' }}"
+                data-desc="{{ product.description|default('', true)|replace('\n', ' ')|e }}"
+                onclick="openEditModalFromBtn(this)">
+                <i class="fa fa-edit"></i> Modifier
+              </button>
+              {# CORRECTION 5 : le <form> de suppression était imbriqué dans le <div> du <td>,
+                 ce qui est valide HTML5, mais le bouton submit déclenchait aussi le form parent
+                 s'il y en avait un. Ajout de onsubmit avec return confirm() directement sur le form. #}
+              <form method="POST" action="{{ url_for('admin_delete_product', pid=product.id) }}"
+                    style="display:inline"
+                    onsubmit="return confirm('Supprimer ce produit ?')">
+                <button type="submit" class="btn-admin btn-red btn-sm"><i class="fa fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" style="text-align:center;padding:40px;color:#888">Aucun produit trouvé</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Ajouter -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3><i class="fa fa-plus-circle" style="color:#2e7d32"></i> Ajouter un Produit</h3>
+      <button class="modal-close" onclick="document.getElementById('addModal').classList.remove('open')"><i class="fa fa-times"></i></button>
+    </div>
+    <form method="POST" action="{{ url_for('admin_add_product') }}">
+      <div class="modal-body">
+        <div class="form-group"><label>Nom du Produit</label><input type="text" name="name" class="form-control" required placeholder="Ex: Engrais NPK 20-20-20"></div>
+        <div class="form-group"><label>Description</label><textarea name="description" class="form-control" rows="3" required placeholder="Description détaillée..."></textarea></div>
+        <div class="form-grid-2">
+          <div class="form-group"><label>Prix (DA)</label><input type="number" name="price" class="form-control" required min="0" step="1" placeholder="Ex: 2500"></div>
+          <div class="form-group"><label>Stock</label><input type="number" name="stock" class="form-control" required min="0" placeholder="Ex: 100"></div>
+        </div>
+        <div class="form-group"><label>Catégorie</label>
+          <select name="category_id" class="form-control" required>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group"><label>URL de l'Image</label><input type="text" name="image_url" class="form-control" placeholder="https://..."></div>
+        <label class="form-check"><input type="checkbox" name="featured"> <span>Mettre en vedette</span></label>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-admin btn-outline" onclick="document.getElementById('addModal').classList.remove('open')">Annuler</button>
+        <button type="submit" class="btn-admin btn-green"><i class="fa fa-save"></i> Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Modifier -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3><i class="fa fa-edit" style="color:#1565c0"></i> Modifier le Produit</h3>
+      <button class="modal-close" onclick="document.getElementById('editModal').classList.remove('open')"><i class="fa fa-times"></i></button>
+    </div>
+    <form method="POST" id="editForm">
+      <div class="modal-body">
+        <div class="form-group"><label>Nom du Produit</label><input type="text" name="name" id="editName" class="form-control" required></div>
+        <div class="form-group"><label>Description</label><textarea name="description" id="editDesc" class="form-control" rows="3" required></textarea></div>
+        <div class="form-grid-2">
+          <div class="form-group"><label>Prix (DA)</label><input type="number" name="price" id="editPrice" class="form-control" required min="0" step="1"></div>
+          <div class="form-group"><label>Stock</label><input type="number" name="stock" id="editStock" class="form-control" required min="0"></div>
+        </div>
+        <div class="form-group"><label>Catégorie</label>
+          <select name="category_id" id="editCat" class="form-control" required>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group"><label>URL de l'Image</label><input type="text" name="image_url" id="editImage" class="form-control"></div>
+        <label class="form-check"><input type="checkbox" name="featured" id="editFeatured"> <span>Mettre en vedette</span></label>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-admin btn-outline" onclick="document.getElementById('editModal').classList.remove('open')">Annuler</button>
+        <button type="submit" class="btn-admin btn-blue"><i class="fa fa-save"></i> Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  {# CORRECTION 6 : openEditModal utilisait des paramètres JS construits inline dans Jinja2
+     avec des guillemets imbriqués fragiles. Remplacé par lecture des data-* attributes. #}
+  function openEditModalFromBtn(btn) {
+    var d = btn.dataset;
+    document.getElementById('editForm').action = '/admin/products/edit/' + d.id;
+    document.getElementById('editName').value   = d.name;
+    document.getElementById('editDesc').value   = d.desc;
+    document.getElementById('editPrice').value  = d.price;
+    document.getElementById('editStock').value  = d.stock;
+    document.getElementById('editImage').value  = d.image;
+    document.getElementById('editCat').value    = d.cat;
+    document.getElementById('editFeatured').checked = (d.featured === 'true');
+    document.getElementById('editModal').classList.add('open');
+  }
+
+  // Filtrage du tableau
+  function filterProducts() {
+    var search = document.getElementById('searchInput').value.toLowerCase();
+    var cat    = document.getElementById('catFilter').value;
+    var stock  = document.getElementById('stockFilter').value;
+    document.querySelectorAll('#productsTable tbody tr[data-name]').forEach(function(row) {
+      var matchName  = row.dataset.name.includes(search);
+      var matchCat   = !cat   || row.dataset.cat === cat;
+      var matchStock = !stock || (stock === 'in' ? parseInt(row.dataset.stock) > 0 : parseInt(row.dataset.stock) === 0);
+      row.style.display = (matchName && matchCat && matchStock) ? '' : 'none';
+    });
+  }
+
+  // Écoute des filtres (centralisé, plus de oninput/onchange inline)
+  document.getElementById('searchInput').addEventListener('input',  filterProducts);
+  document.getElementById('catFilter').addEventListener('change',   filterProducts);
+  document.getElementById('stockFilter').addEventListener('change', filterProducts);
+
+  // Fermer modal en cliquant à l'extérieur
+  document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+</script>
+{% endblock %}

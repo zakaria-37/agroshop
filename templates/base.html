@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}AgroShop – Marché Agricole Intelligent{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Flash Messages -->
+  <div class="flash-container" id="flashContainer">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-msg flash-{{ category }}">
+            <i class="fa {% if category == 'success' %}fa-check-circle{% elif category == 'danger' %}fa-exclamation-circle{% elif category == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %}"></i>
+            {{ message }}
+            <button onclick="this.parentElement.remove()"><i class="fa fa-times"></i></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="container">
+      <span><i class="fa fa-phone"></i> +213 23 XX XX XX</span>
+      <span><i class="fa fa-envelope"></i> support@agroshop.com</span>
+      <span><i class="fa fa-truck"></i> Livraison gratuite dès 10 000 DA</span>
+      <span style="margin-left:auto; color: var(--green-neon);">
+        <i class="fa fa-circle" style="font-size:0.5rem; vertical-align:middle;"></i>
+        AGROTEL CONNECTED
+      </span>
+    </div>
+  </div>
+
+  <!-- Main Navbar -->
+  <nav class="navbar" id="mainNav">
+    <div class="container nav-inner">
+
+      <!-- ══ LOGO with inline SVG AgroTel-style icon ══ -->
+      <a href="{{ url_for('index') }}" class="logo">
+        <div style="width:48px; height:48px; flex-shrink:0;">
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
+            <rect width="48" height="48" rx="9" fill="#0d2211" stroke="rgba(46,204,113,0.45)" stroke-width="1"/>
+            <!-- Circuit lines -->
+            <line x1="6" y1="24" x2="12" y2="24" stroke="#2ecc71" stroke-width="1.2" opacity="0.5"/>
+            <line x1="36" y1="24" x2="42" y2="24" stroke="#2ecc71" stroke-width="1.2" opacity="0.5"/>
+            <line x1="6" y1="24" x2="6" y2="32" stroke="#2ecc71" stroke-width="1.2" opacity="0.5"/>
+            <line x1="42" y1="24" x2="42" y2="32" stroke="#2ecc71" stroke-width="1.2" opacity="0.5"/>
+            <circle cx="6" cy="24" r="1.5" fill="#2ecc71" opacity="0.7"/>
+            <circle cx="42" cy="24" r="1.5" fill="#2ecc71" opacity="0.7"/>
+            <!-- Left leaf -->
+            <path d="M 17,29 Q 10,23 12,16 Q 13,11 18,13 Q 22,15 22,22 Q 22,26 19,29 Z" fill="#1fa355" opacity="0.9"/>
+            <line x1="17" y1="29" x2="18" y2="13" stroke="#0f6b33" stroke-width="0.8"/>
+            <!-- Right leaf -->
+            <path d="M 31,29 Q 38,23 36,16 Q 35,11 30,13 Q 26,15 26,22 Q 26,26 29,29 Z" fill="#1fa355" opacity="0.9"/>
+            <line x1="31" y1="29" x2="30" y2="13" stroke="#0f6b33" stroke-width="0.8"/>
+            <!-- Wheat stem -->
+            <line x1="24" y1="32" x2="24" y2="8" stroke="#2ecc71" stroke-width="1.8" stroke-linecap="round"/>
+            <!-- Wheat left grains -->
+            <ellipse cx="20.5" cy="22" rx="2.8" ry="4.5" fill="#2ecc71" transform="rotate(-20,20.5,22)"/>
+            <ellipse cx="19" cy="15" rx="2.5" ry="4" fill="#27ae60" transform="rotate(-22,19,15)"/>
+            <!-- Wheat right grains -->
+            <ellipse cx="27.5" cy="22" rx="2.8" ry="4.5" fill="#2ecc71" transform="rotate(20,27.5,22)"/>
+            <ellipse cx="29" cy="15" rx="2.5" ry="4" fill="#27ae60" transform="rotate(22,29,15)"/>
+            <!-- Tip -->
+            <ellipse cx="24" cy="9" rx="2" ry="3.5" fill="#2ecc71"/>
+            <!-- WiFi arcs -->
+            <path d="M 29,11 Q 33,8 33,5" stroke="#2ecc71" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <path d="M 30,14 Q 36,10 36,6" stroke="#2ecc71" stroke-width="0.9" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <circle cx="28" cy="12" r="1.2" fill="#2ecc71"/>
+            <!-- Bottom connector -->
+            <path d="M 16,33 Q 16,38 24,39 Q 32,38 32,33" stroke="#0f6b33" stroke-width="1" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <span class="logo-name"><span class="agro">AGRO</span><span class="shop">SHOP</span></span>
+          <span class="logo-tagline">DE LA FERME AU FUTUR</span>
+          <span class="logo-powered">POWERED BY AGROTEL</span>
+        </div>
+      </a>
+
+      <!-- Search -->
+      <div class="nav-search">
+        <form action="{{ url_for('products') }}" method="GET">
+          <input type="text" name="q" placeholder="Rechercher semences, engrais, outils…" value="{{ request.args.get('q','') }}">
+          <button type="submit"><i class="fa fa-search"></i></button>
+        </form>
+      </div>
+
+      <!-- Actions -->
+      <div class="nav-actions">
+        {% if session.get('user_id') %}
+          <div class="nav-user dropdown">
+            <button class="btn-icon dropdown-toggle">
+              <i class="fa fa-user-circle"></i>
+              <span>{{ session.get('user_name','') | truncate(12, True, '') }}</span>
+            </button>
+            <div class="dropdown-menu">
+              {% if session.get('is_admin') %}
+                <a href="{{ url_for('admin_dashboard') }}"><i class="fa fa-tachometer-alt"></i> Panneau Admin</a>
+              {% endif %}
+              <a href="{{ url_for('my_orders') }}"><i class="fa fa-shopping-bag"></i> Mes Commandes</a>
+              <div class="divider"></div>
+              <a href="{{ url_for('logout') }}" class="text-danger"><i class="fa fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+          </div>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="btn-outline-sm">Connexion</a>
+          <a href="{{ url_for('register') }}" class="btn-primary-sm">S'inscrire</a>
+        {% endif %}
+        <button class="btn-icon cart-btn" onclick="toggleCart()">
+          <i class="fa fa-shopping-cart"></i>
+          <span class="cart-badge" id="cartBadge">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Nav -->
+    <div class="cat-nav">
+      <div class="container cat-nav-inner">
+        <a href="{{ url_for('products') }}" class="cat-link {% if request.endpoint == 'products' and not request.args.get('category') %}active{% endif %}">
+          <i class="fa fa-th-large"></i> Tous les Produits
+        </a>
+        <a href="{{ url_for('products', category='fertilizers') }}" class="cat-link">
+          <i class="fa fa-flask"></i> Engrais
+        </a>
+        <a href="{{ url_for('products', category='pesticides') }}" class="cat-link">
+          <i class="fa fa-bug"></i> Pesticides
+        </a>
+        <a href="{{ url_for('products', category='seeds') }}" class="cat-link">
+          <i class="fa fa-seedling"></i> Semences
+        </a>
+        <a href="{{ url_for('products', category='tools') }}" class="cat-link">
+          <i class="fa fa-tools"></i> Outils Agricoles
+        </a>
+        <a href="{{ url_for('products', category='soil-nutrients') }}" class="cat-link">
+          <i class="fa fa-mountain"></i> Nutriments du Sol
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="{{ url_for('index') }}"><i class="fa fa-home"></i> Accueil</a>
+      <a href="{{ url_for('products') }}"><i class="fa fa-th-large"></i> Tous les Produits</a>
+      <a href="{{ url_for('products', category='fertilizers') }}"><i class="fa fa-flask"></i> Engrais</a>
+      <a href="{{ url_for('products', category='pesticides') }}"><i class="fa fa-bug"></i> Pesticides</a>
+      <a href="{{ url_for('products', category='seeds') }}"><i class="fa fa-seedling"></i> Semences</a>
+      <a href="{{ url_for('products', category='tools') }}"><i class="fa fa-tools"></i> Outils Agricoles</a>
+      <a href="{{ url_for('products', category='soil-nutrients') }}"><i class="fa fa-mountain"></i> Nutriments du Sol</a>
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('my_orders') }}"><i class="fa fa-shopping-bag"></i> Mes Commandes</a>
+        <a href="{{ url_for('logout') }}"><i class="fa fa-sign-out-alt"></i> Déconnexion</a>
+      {% else %}
+        <a href="{{ url_for('login') }}"><i class="fa fa-sign-in-alt"></i> Connexion</a>
+        <a href="{{ url_for('register') }}"><i class="fa fa-user-plus"></i> S'inscrire</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+      <h3><i class="fa fa-shopping-cart"></i> Panier</h3>
+      <button onclick="toggleCart()"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">
+        <i class="fa fa-shopping-basket"></i>
+        <p>Votre panier est vide</p>
+        <a href="{{ url_for('products') }}" onclick="toggleCart()">Commencer les achats</a>
+      </div>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+      <div class="cart-total">
+        <span>Total :</span>
+        <strong id="cartTotal">$0.00</strong>
+      </div>
+      <a href="{{ url_for('checkout') }}" class="btn-checkout">
+        <i class="fa fa-lock"></i> Passer à la caisse
+      </a>
+    </div>
+  </div>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo" style="margin-bottom:14px;">
+            <div style="width:40px; height:40px; flex-shrink:0;">
+              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+                <rect width="48" height="48" rx="9" fill="#0d2211" stroke="rgba(46,204,113,0.4)" stroke-width="1"/>
+                <line x1="6" y1="24" x2="12" y2="24" stroke="#2ecc71" stroke-width="1.2" opacity="0.5"/>
+                <line x1="36" y1="24" x2="42" y2="24" stroke="#2ecc71" stroke-width="1.2" opacity="0.5"/>
+                <path d="M 17,29 Q 10,23 12,16 Q 13,11 18,13 Q 22,15 22,22 Q 22,26 19,29 Z" fill="#1fa355" opacity="0.9"/>
+                <path d="M 31,29 Q 38,23 36,16 Q 35,11 30,13 Q 26,15 26,22 Q 26,26 29,29 Z" fill="#1fa355" opacity="0.9"/>
+                <line x1="24" y1="32" x2="24" y2="8" stroke="#2ecc71" stroke-width="1.8" stroke-linecap="round"/>
+                <ellipse cx="20.5" cy="22" rx="2.8" ry="4.5" fill="#2ecc71" transform="rotate(-20,20.5,22)"/>
+                <ellipse cx="19" cy="15" rx="2.5" ry="4" fill="#27ae60" transform="rotate(-22,19,15)"/>
+                <ellipse cx="27.5" cy="22" rx="2.8" ry="4.5" fill="#2ecc71" transform="rotate(20,27.5,22)"/>
+                <ellipse cx="29" cy="15" rx="2.5" ry="4" fill="#27ae60" transform="rotate(22,29,15)"/>
+                <ellipse cx="24" cy="9" rx="2" ry="3.5" fill="#2ecc71"/>
+                <path d="M 29,11 Q 33,8 33,5" stroke="#2ecc71" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                <circle cx="28" cy="12" r="1.2" fill="#2ecc71"/>
+              </svg>
+            </div>
+            <div>
+              <span class="logo-name"><span class="agro">AGRO</span><span class="shop">SHOP</span></span>
+              <span class="logo-tagline">DE LA FERME AU FUTUR</span>
+            </div>
+          </div>
+          <p>Votre partenaire de confiance pour des produits agricoles premium, connecté à la plateforme AgroTel de surveillance intelligente des cultures.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Catégories</h4>
+          <ul>
+            <li><a href="{{ url_for('products', category='fertilizers') }}">Engrais</a></li>
+            <li><a href="{{ url_for('products', category='pesticides') }}">Pesticides</a></li>
+            <li><a href="{{ url_for('products', category='seeds') }}">Semences</a></li>
+            <li><a href="{{ url_for('products', category='tools') }}">Outils Agricoles</a></li>
+            <li><a href="{{ url_for('products', category='soil-nutrients') }}">Nutriments du Sol</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">À Propos</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Politique de Livraison</a></li>
+            <li><a href="#">Retours</a></li>
+          </ul>
+        </div>
+        <div class="footer-newsletter">
+          <h4>Newsletter</h4>
+          <p>Recevez des conseils agricoles et des offres exclusives dans votre boîte mail.</p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="votre@email.com">
+            <button><i class="fa fa-paper-plane"></i></button>
+          </div>
+          <div class="payment-icons">
+            <i class="fab fa-cc-visa"></i>
+            <i class="fab fa-cc-mastercard"></i>
+            <i class="fab fa-cc-paypal"></i>
+            <i class="fab fa-cc-stripe"></i>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 AgroShop. Tous droits réservés.</p>
+        <p>Powered by <span style="color:var(--green-neon); font-family:var(--font-mono);">AGROTEL</span> — Intelligent Crop Management</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

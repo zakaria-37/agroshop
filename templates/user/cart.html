@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+{% block title %}Panier – AgroShop{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container">
+  <h1><i class="fa fa-shopping-cart"></i> Mon Panier</h1>
+  <nav class="breadcrumb"><a href="{{ url_for('index') }}">Accueil</a><span>/</span><span>Panier</span></nav>
+</div></div>
+
+<div class="container" style="padding:40px 20px;max-width:1100px">
+  <!-- État vide -->
+  <div class="empty-state" id="cartEmptyState" style="padding:80px 0;display:none">
+    <i class="fa fa-shopping-basket"></i>
+    <h3>Votre panier est vide</h3>
+    <p>Ajoutez des produits pour commencer votre commande.</p>
+    <a href="{{ url_for('products') }}" class="btn-primary-sm" style="display:inline-block;margin-top:8px">
+      <i class="fa fa-store"></i> Voir les produits
+    </a>
+  </div>
+
+  <!-- Contenu panier -->
+  <div id="cartFullContent" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start">
+
+      <!-- ─── COLONNE GAUCHE : Articles ─── -->
+      <div>
+        <div style="background:white;border-radius:14px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,0.07)">
+          <div style="padding:18px 24px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;background:#f8faf8">
+            <h3 style="font-weight:700;font-size:1rem;color:#1b5e20">
+              <i class="fa fa-list" style="margin-right:8px;color:#2e7d32"></i>
+              Articles (<span id="itemCount">0</span>)
+            </h3>
+            <button onclick="clearCart();renderCartPage();"
+                    style="background:none;border:none;color:#c62828;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;font-weight:600">
+              <i class="fa fa-trash"></i> Vider le panier
+            </button>
+          </div>
+          <div id="cartPageItems" style="padding:0 24px"></div>
+        </div>
+
+        <!-- Livraison gratuite progrès -->
+        <div id="freeShippingBar" style="margin-top:14px;background:white;border-radius:12px;padding:16px 20px;box-shadow:0 2px 10px rgba(0,0,0,0.06)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:0.85rem">
+            <span style="font-weight:600;color:#2e7d32"><i class="fa fa-truck" style="margin-right:6px"></i>Livraison offerte dès 30 000 DA</span>
+            <span id="freeShipRemaining" style="font-size:0.82rem;color:#888"></span>
+          </div>
+          <div style="height:8px;background:#e8f5e9;border-radius:50px;overflow:hidden">
+            <div id="freeShipProgress" style="height:100%;background:linear-gradient(90deg,#4caf50,#2e7d32);border-radius:50px;transition:width 0.4s ease;width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── COLONNE DROITE : Récapitulatif ─── -->
+      <div style="position:sticky;top:90px">
+        <div style="background:white;border-radius:14px;padding:24px;box-shadow:0 2px 14px rgba(0,0,0,0.07)">
+          <h3 style="font-weight:700;margin-bottom:18px;color:#1b5e20">
+            <i class="fa fa-receipt" style="margin-right:8px;color:#2e7d32"></i>Récapitulatif
+          </h3>
+
+          <!-- Sélecteur de wilaya pour estimer la livraison -->
+          <div style="margin-bottom:18px">
+            <label style="display:block;font-size:0.82rem;font-weight:600;margin-bottom:6px;color:#555">
+              <i class="fa fa-map-marker-alt" style="color:#2e7d32;margin-right:5px"></i>
+              Wilaya de livraison
+            </label>
+            <select id="cartWilayaSelect" onchange="renderCartPage()"
+                    style="width:100%;padding:10px 12px;border:2px solid #e5e7eb;border-radius:9px;font-size:0.88rem;font-family:inherit;cursor:pointer;outline:none;transition:border-color 0.2s">
+              <option value="">-- Choisir votre wilaya --</option>
+              <optgroup label="🌿 Zone Nord (500 DA)">
+                <option value="NORD">Alger</option>
+                <option value="NORD">Blida</option>
+                <option value="NORD">Boumerdès</option>
+                <option value="NORD">Tipaza</option>
+                <option value="NORD">Tizi Ouzou</option>
+                <option value="NORD">Béjaïa</option>
+                <option value="NORD">Jijel</option>
+                <option value="NORD">Skikda</option>
+                <option value="NORD">Annaba</option>
+                <option value="NORD">El Tarf</option>
+                <option value="NORD">Guelma</option>
+                <option value="NORD">Souk Ahras</option>
+                <option value="NORD">Constantine</option>
+                <option value="NORD">Mila</option>
+                <option value="NORD">Oum El Bouaghi</option>
+                <option value="NORD">Sétif</option>
+                <option value="NORD">Bordj Bou Arréridj</option>
+                <option value="NORD">Bouira</option>
+                <option value="NORD">Médéa</option>
+                <option value="NORD">Tébessa</option>
+                <option value="NORD">Batna</option>
+                <option value="NORD">Khenchela</option>
+                <option value="NORD">Oran</option>
+                <option value="NORD">Sidi Bel Abbès</option>
+                <option value="NORD">Tlemcen</option>
+                <option value="NORD">Aïn Témouchent</option>
+                <option value="NORD">Mostaganem</option>
+                <option value="NORD">Relizane</option>
+                <option value="NORD">Mascara</option>
+                <option value="NORD">Chlef</option>
+                <option value="NORD">Aïn Defla</option>
+                <option value="NORD">Tissemsilt</option>
+              </optgroup>
+              <optgroup label="🌾 Zone Hauts Plateaux (700 DA)">
+                <option value="HP">Tiaret</option>
+                <option value="HP">Saïda</option>
+                <option value="HP">El Bayadh</option>
+                <option value="HP">Naâma</option>
+                <option value="HP">Djelfa</option>
+                <option value="HP">M'Sila</option>
+                <option value="HP">Laghouat</option>
+                <option value="HP">Biskra</option>
+                <option value="HP">El Oued</option>
+                <option value="HP">Ouargla</option>
+                <option value="HP">Ghardaïa</option>
+                <option value="HP">Tébessa</option>
+                <option value="HP">Khenchela</option>
+                <option value="HP">Bordj Badji Mokhtar</option>
+                <option value="HP">Ouled Djellal</option>
+                <option value="HP">Touggourt</option>
+                <option value="HP">El M'Ghair</option>
+              </optgroup>
+              <optgroup label="🏜️ Zone Sud (1 000 DA)">
+                <option value="SUD">Adrar</option>
+                <option value="SUD">Béchar</option>
+                <option value="SUD">Tindouf</option>
+                <option value="SUD">Tamanrasset</option>
+                <option value="SUD">Illizi</option>
+                <option value="SUD">Djanet</option>
+                <option value="SUD">In Salah</option>
+                <option value="SUD">In Guezzam</option>
+                <option value="SUD">Timimoun</option>
+                <option value="SUD">Béni Abbès</option>
+                <option value="SUD">El Meniaa</option>
+              </optgroup>
+            </select>
+            <!-- Badge zone + tarif affiché -->
+            <div id="shippingZoneInfo" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;font-size:0.82rem;font-weight:600;display:flex;align-items:center;gap:7px"></div>
+          </div>
+
+          <!-- Lignes de prix -->
+          <div style="border-top:1px solid #f0f0f0;padding-top:14px">
+            <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed #f0f0f0;font-size:0.9rem">
+              <span style="color:#666">Sous-total</span>
+              <span id="pageSubtotal" style="font-weight:700">0 DA</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed #f0f0f0;font-size:0.9rem">
+              <span style="color:#666">Frais de livraison</span>
+              <span id="pageShipping" style="font-weight:700;color:#2e7d32">—</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:1.05rem">
+              <strong>Total</strong>
+              <strong id="pageTotal" style="color:#2e7d32;font-size:1.2rem">0 DA</strong>
+            </div>
+          </div>
+
+          <!-- Bouton checkout -->
+          <a href="{{ url_for('checkout') }}" class="btn-checkout" style="display:block;text-align:center;margin-top:4px">
+            <i class="fa fa-lock"></i> Passer la Commande
+          </a>
+          <a href="{{ url_for('products') }}" style="display:block;text-align:center;margin-top:12px;color:#888;font-size:0.84rem">
+            <i class="fa fa-arrow-left"></i> Continuer mes achats
+          </a>
+
+          <!-- Sécurité -->
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid #f0f0f0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:0.76rem;color:#aaa">
+            <i class="fa fa-lock" style="color:#2e7d32"></i> Paiement sécurisé à la livraison
+          </div>
+        </div>
+
+        <!-- Récap frais par zone -->
+        <div style="margin-top:14px;background:#f8faf8;border:1px solid #e8f5e9;border-radius:12px;padding:16px 18px">
+          <p style="font-size:0.8rem;font-weight:700;color:#2e7d32;margin-bottom:10px">
+            <i class="fa fa-info-circle"></i> Grille tarifaire de livraison
+          </p>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:0.8rem">
+            <div style="display:flex;justify-content:space-between">
+              <span>🌿 Zone Nord</span><strong>500 DA</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span>🌾 Hauts Plateaux</span><strong>700 DA</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span>🏜️ Zone Sud</span><strong>1 000 DA</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;color:#2e7d32;font-weight:700;border-top:1px dashed #c8e6c9;padding-top:6px;margin-top:2px">
+              <span><i class="fa fa-gift"></i> Dès 30 000 DA</span><strong>GRATUIT !</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ─── Tarifs par zone ──────────────────────────────────────────────────────────
+const SHIPPING_RATES = {
+  'NORD': { price: 500,   label: '🌿 Zone Nord',          color: '#e8f5e9', text: '#2e7d32' },
+  'HP':   { price: 700,   label: '🌾 Hauts Plateaux',     color: '#fff8e1', text: '#e65100' },
+  'SUD':  { price: 1000,  label: '🏜️ Zone Sud',           color: '#fce4ec', text: '#c62828' },
+};
+const FREE_SHIPPING_THRESHOLD = 30000;
+
+function getSelectedZone() {
+  const sel = document.getElementById('cartWilayaSelect');
+  if (!sel) return null;
+  const opt = sel.options[sel.selectedIndex];
+  return opt && opt.value ? opt.value : null;
+}
+
+function getShippingCost(subtotal, zone) {
+  if (subtotal >= FREE_SHIPPING_THRESHOLD) return 0;
+  if (!zone) return null; // inconnu
+  return SHIPPING_RATES[zone].price;
+}
+
+function updateShippingZoneInfo(zone, subtotal) {
+  const box = document.getElementById('shippingZoneInfo');
+  if (!zone) { box.style.display = 'none'; return; }
+  const r = SHIPPING_RATES[zone];
+  box.style.display = 'flex';
+  box.style.background = r.color;
+  box.style.color = r.text;
+  const isFree = subtotal >= FREE_SHIPPING_THRESHOLD;
+  box.innerHTML = `<i class="fa fa-truck"></i> ${r.label} &nbsp;–&nbsp; <span style="text-decoration:${isFree?'line-through':'none'}">${r.price.toLocaleString('fr-DZ')} DA</span>${isFree ? ' &nbsp;<strong>🎉 LIVRAISON GRATUITE !</strong>' : ''}`;
+}
+
+function updateFreeShippingBar(subtotal) {
+  const pct     = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+  const remain  = FREE_SHIPPING_THRESHOLD - subtotal;
+  const bar     = document.getElementById('freeShipProgress');
+  const label   = document.getElementById('freeShipRemaining');
+  bar.style.width = pct + '%';
+  if (subtotal >= FREE_SHIPPING_THRESHOLD) {
+    label.innerHTML = '<i class="fa fa-check-circle" style="color:#2e7d32"></i> <strong style="color:#2e7d32">Livraison offerte !</strong>';
+    bar.style.background = 'linear-gradient(90deg,#4caf50,#1b5e20)';
+  } else {
+    label.textContent = 'Encore ' + remain.toLocaleString('fr-DZ') + ' DA pour la livraison gratuite';
+    bar.style.background = 'linear-gradient(90deg,#4caf50,#2e7d32)';
+  }
+}
+
+function renderCartPage() {
+  const cart  = getCart();
+  const empty = document.getElementById('cartEmptyState');
+  const full  = document.getElementById('cartFullContent');
+  const items = document.getElementById('cartPageItems');
+  const zone  = getSelectedZone();
+
+  if (!cart || cart.length === 0) {
+    empty.style.display = 'block';
+    full.style.display  = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  full.style.display  = 'block';
+
+  // Calcul sous-total
+  let subtotal = 0;
+  cart.forEach(i => { subtotal += i.price * i.qty; });
+
+  // Articles
+  document.getElementById('itemCount').textContent = cart.reduce((a,i)=>a+i.qty,0);
+  items.innerHTML = cart.map(item => {
+    const line = item.price * item.qty;
+    return `
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid #f5f5f5">
+      <img src="${item.image || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=80&q=80'}"
+           style="width:68px;height:68px;object-fit:cover;border-radius:10px;border:1px solid #e5e7eb;flex-shrink:0">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:0.92rem;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
+        <div style="font-size:0.82rem;color:#888">${Math.round(item.price).toLocaleString('fr-DZ')} DA / unité</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;flex-shrink:0">
+        <button onclick="updateQty(${item.id},-1);renderCartPage();"
+                style="width:28px;height:28px;border:1.5px solid #d0d0d0;border-radius:7px;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s"
+                onmouseover="this.style.background='#e8f5e9';this.style.borderColor='#2e7d32'"
+                onmouseout="this.style.background='white';this.style.borderColor='#d0d0d0'">
+          <i class="fa fa-minus" style="font-size:0.7rem"></i>
+        </button>
+        <span style="font-weight:800;width:26px;text-align:center;font-size:0.95rem">${item.qty}</span>
+        <button onclick="updateQty(${item.id},1);renderCartPage();"
+                style="width:28px;height:28px;border:1.5px solid #d0d0d0;border-radius:7px;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s"
+                onmouseover="this.style.background='#e8f5e9';this.style.borderColor='#2e7d32'"
+                onmouseout="this.style.background='white';this.style.borderColor='#d0d0d0'">
+          <i class="fa fa-plus" style="font-size:0.7rem"></i>
+        </button>
+      </div>
+      <div style="text-align:right;min-width:90px;flex-shrink:0">
+        <div style="font-weight:800;color:#2e7d32;font-size:0.95rem">${Math.round(line).toLocaleString('fr-DZ')} DA</div>
+        <button onclick="removeFromCart(${item.id});renderCartPage();"
+                style="background:none;border:none;color:#c62828;cursor:pointer;font-size:0.76rem;margin-top:4px;display:flex;align-items:center;gap:4px;margin-left:auto;opacity:0.8"
+                onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
+          <i class="fa fa-times"></i> Retirer
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Livraison
+  const shippingCost = getShippingCost(subtotal, zone);
+  const shippingEl   = document.getElementById('pageShipping');
+  const totalEl      = document.getElementById('pageTotal');
+
+  document.getElementById('pageSubtotal').textContent = Math.round(subtotal).toLocaleString('fr-DZ') + ' DA';
+
+  if (subtotal >= FREE_SHIPPING_THRESHOLD) {
+    shippingEl.innerHTML = '<span style="text-decoration:line-through;color:#aaa;font-size:0.8rem">' +
+      (zone ? SHIPPING_RATES[zone].price.toLocaleString('fr-DZ') + ' DA' : '—') +
+      '</span> <strong style="color:#2e7d32">GRATUIT 🎉</strong>';
+    totalEl.textContent = Math.round(subtotal).toLocaleString('fr-DZ') + ' DA';
+  } else if (shippingCost !== null) {
+    shippingEl.textContent = Math.round(shippingCost).toLocaleString('fr-DZ') + ' DA';
+    totalEl.textContent    = Math.round(subtotal + shippingCost).toLocaleString('fr-DZ') + ' DA';
+  } else {
+    shippingEl.innerHTML = '<span style="color:#e65100;font-size:0.8rem">Choisir une wilaya</span>';
+    totalEl.textContent  = Math.round(subtotal).toLocaleString('fr-DZ') + ' DA';
+  }
+
+  // Barre progrès livraison gratuite
+  updateFreeShippingBar(subtotal);
+  // Info zone
+  updateShippingZoneInfo(zone, subtotal);
+
+  // Focus select si aucune wilaya choisie
+  const sel = document.getElementById('cartWilayaSelect');
+  if (!zone) sel.style.borderColor = '#ff8f00';
+  else sel.style.borderColor = '#2e7d32';
+}
+
+document.addEventListener('DOMContentLoaded', renderCartPage);
+</script>
+{% endblock %}

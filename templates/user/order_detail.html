@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.id }} – AgroShop{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container">
+  <h1><i class="fa fa-receipt"></i> Order #{{ order.id }}</h1>
+  <nav class="breadcrumb"><a href="{{ url_for('index') }}">Home</a><span>/</span><a href="{{ url_for('my_orders') }}">My Orders</a><span>/</span><span>Order #{{ order.id }}</span></nav>
+</div></div>
+<div class="container" style="max-width:800px;padding:40px 20px">
+  <div class="order-detail-card">
+    <div class="order-detail-header">
+      <div>
+        <h2>Order Details</h2>
+        <p>Placed on {{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+      </div>
+      <div class="order-status-badge status-{{ order.status }}">{{ order.status | capitalize }}</div>
+    </div>
+    <div class="order-detail-items">
+      <h3>Items</h3>
+      {% for item in order.items %}
+      <div class="order-item-row">
+        <img src="{{ item.product.image_url or 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=60&q=80' }}" alt="{{ item.product.name }}">
+        <div>
+          <strong>{{ item.product.name }}</strong>
+          <small>{{ item.product.category.name }}</small>
+        </div>
+        <div style="text-align:right">
+          <span>{{ "%.0f"|format(item.price * 135) }} DA × {{ item.quantity }}</span>
+          <strong>{{ "%.0f"|format(item.price * item.quantity * 135) }} DA</strong>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="order-detail-totals">
+      <div class="total-row"><span>Sous-total</span><span>{{ "%.0f"|format(order.total * 135) }} DA</span></div>
+      <div class="total-row"><span>Livraison</span><span>{% if order.total >= 75 %}GRATUITE{% else %}1 350 DA{% endif %}</span></div>
+      <div class="total-row total-grand"><span>Total</span><strong>{{ "%.0f"|format((order.total + (0 if order.total >= 75 else 9.99)) * 135) }} DA</strong></div>
+    </div>
+    {% if order.address %}
+    <div class="order-address">
+      <h3><i class="fa fa-map-marker-alt"></i> Delivery Address</h3>
+      <p>{{ order.address }}</p>
+    </div>
+    {% endif %}
+    <div class="order-actions">
+      <a href="{{ url_for('my_orders') }}" class="btn-outline-sm"><i class="fa fa-arrow-left"></i> Back to Orders</a>
+      <a href="{{ url_for('products') }}" class="btn-primary-sm"><i class="fa fa-store"></i> Continue Shopping</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

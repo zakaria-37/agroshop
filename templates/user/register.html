@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Register – AgroShop{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-split">
+    <div class="auth-brand">
+      <div class="auth-brand-inner">
+        <div class="logo"><div class="logo-icon"><i class="fa fa-leaf"></i></div>
+          <div><span class="logo-name">AgroShop</span><span class="logo-tagline">Farm to Future</span></div></div>
+        <h2>Join the AgroShop community</h2>
+        <p>Over 10,000 farmers trust us for their agricultural needs. Be part of something bigger.</p>
+        <div class="auth-features">
+          <div class="auth-feature"><i class="fa fa-gift"></i> 15% off your first order</div>
+          <div class="auth-feature"><i class="fa fa-headset"></i> Free agronomy advice</div>
+          <div class="auth-feature"><i class="fa fa-shipping-fast"></i> Priority shipping</div>
+        </div>
+      </div>
+    </div>
+    <div class="auth-form-side">
+      <div class="auth-card">
+        <h2><i class="fa fa-user-plus"></i> Create Account</h2>
+        <p class="auth-sub">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+        <form method="POST" onsubmit="return validateRegister()">
+          <div class="form-group">
+            <label><i class="fa fa-user"></i> Full Name</label>
+            <input type="text" name="name" required placeholder="John Farmer" autofocus>
+          </div>
+          <div class="form-group">
+            <label><i class="fa fa-envelope"></i> Email Address</label>
+            <input type="email" name="email" required placeholder="your@email.com">
+          </div>
+          <div class="form-group">
+            <label><i class="fa fa-lock"></i> Password</label>
+            <div class="password-wrap">
+              <input type="password" name="password" id="pw1" required placeholder="Min 6 characters">
+              <button type="button" onclick="togglePw('pw1')"><i class="fa fa-eye"></i></button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="fa fa-lock"></i> Confirm Password</label>
+            <div class="password-wrap">
+              <input type="password" id="pw2" required placeholder="Repeat password">
+              <button type="button" onclick="togglePw('pw2')"><i class="fa fa-eye"></i></button>
+            </div>
+          </div>
+          <label class="checkbox-label terms">
+            <input type="checkbox" required> I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+          </label>
+          <button type="submit" class="btn-auth">Create Account <i class="fa fa-arrow-right"></i></button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function togglePw(id){const f=document.getElementById(id);f.type=f.type==='password'?'text':'password';}
+function validateRegister(){
+  const p1=document.getElementById('pw1').value;
+  const p2=document.getElementById('pw2').value;
+  if(p1!==p2){showToast('Passwords do not match','error');return false;}
+  if(p1.length<6){showToast('Password must be at least 6 characters','error');return false;}
+  return true;
+}
+</script>
+{% endblock %}

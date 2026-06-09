@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Mes Commandes – AgroShop{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container">
+  <h1><i class="fa fa-shopping-bag"></i> Mes Commandes</h1>
+  <nav class="breadcrumb"><a href="{{ url_for('index') }}">Accueil</a><span>/</span><span>Mes Commandes</span></nav>
+</div></div>
+<div class="container">
+  {% if orders %}
+  <div class="orders-list">
+    {% for order in orders %}
+    <div class="order-card">
+      <div class="order-card-header">
+        <div>
+          <strong>Commande #{{ order.id }}</strong>
+          <span class="order-date"><i class="fa fa-clock"></i> {{ order.created_at.strftime('%d/%m/%Y') }}</span>
+        </div>
+        <div class="order-status-badge status-{{ order.status }}">
+          {% if order.status == 'pending' %}En attente
+          {% elif order.status == 'processing' %}En cours
+          {% elif order.status == 'shipped' %}Expédiée
+          {% elif order.status == 'delivered' %}Livrée
+          {% elif order.status == 'cancelled' %}Annulée
+          {% else %}{{ order.status | capitalize }}{% endif %}
+        </div>
+      </div>
+      <div class="order-card-body">
+        {% for item in order.items %}
+        <div class="order-item-row">
+          <img src="{{ item.product.image_url or 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=60&q=80' }}" alt="{{ item.product.name }}">
+          <div>
+            <strong>{{ item.product.name }}</strong>
+            <small>Qté : {{ item.quantity }} × {{ "%.0f"|format(item.price) }} DA</small>
+          </div>
+          <span>{{ "%.0f"|format(item.quantity * item.price) }} DA</span>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="order-card-footer">
+        <span>{{ order.items|length }} article(s)</span>
+        <strong class="order-total">Total : {{ "%.0f"|format(order.total) }} DA</strong>
+        <a href="{{ url_for('order_detail', oid=order.id) }}" class="btn-outline-sm">Voir Détails</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state" style="padding:80px 0">
+    <i class="fa fa-shopping-bag"></i>
+    <h3>Aucune Commande</h3>
+    <p>Vous n'avez pas encore passé de commande. Commencez à acheter !</p>
+    <a href="{{ url_for('products') }}" class="btn-primary-sm">Commander</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
