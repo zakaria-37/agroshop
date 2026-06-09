@@ -1196,28 +1196,30 @@ input, select, textarea, button { font-family: var(--font-body); }
 
   /* ── Navbar layout ── */
   .nav-inner {
-    padding: 10px 16px;
-    gap: 10px;
+    padding: 10px 14px;
+    gap: 8px;
     flex-wrap: nowrap;
+    align-items: center;
   }
 
-  /* ── Logo : on garde icône + nom sur une ligne, on masque tagline/powered ── */
-  .logo { gap: 8px; flex-shrink: 0; min-width: 0; }
+  /* ── Logo : icône + nom sur une seule ligne, tagline/powered masqués ── */
+  .logo { gap: 8px; flex-shrink: 0; min-width: 0; flex: 0 0 auto; }
   .logo > div:first-child { width: 36px !important; height: 36px !important; flex-shrink: 0; }
   .logo > div:first-child svg { width: 36px !important; height: 36px !important; }
-  .logo-name { font-size: 1.1rem; letter-spacing: 1px; white-space: nowrap; }
+  .logo > div:last-child { display: flex; flex-direction: row; align-items: center; gap: 0; }
+  .logo-name { font-size: 1.05rem; letter-spacing: 1px; white-space: nowrap; display: block; }
   .logo-tagline,
-  .logo-powered { display: none; }
+  .logo-powered { display: none !important; }
 
   /* ── Search : cachée sur mobile (accessible via menu) ── */
   .nav-search { display: none; }
 
-  /* ── Actions : compact ── */
-  .nav-actions { gap: 6px; margin-left: auto; flex-shrink: 0; }
+  /* ── Actions : compact, ne pousse pas le logo ── */
+  .nav-actions { gap: 6px; margin-left: auto; flex-shrink: 0; flex: 0 0 auto; align-items: center; }
   .btn-outline-sm,
   .btn-primary-sm { padding: 6px 10px; font-size: 0.75rem; }
 
-  /* Masquer les boutons connexion/inscription du nav sur très petits écrans */
+  /* Masquer les boutons connexion/inscription du nav — accessibles via hamburger ── */
   .btn-outline-sm.nav-btn,
   .btn-primary-sm.nav-btn { display: none; }
 
@@ -1282,7 +1284,7 @@ input, select, textarea, button { font-family: var(--font-body); }
 @media (max-width:480px) {
   /* ── Navbar encore plus compact ── */
   .nav-inner { padding: 8px 12px; }
-  .logo-name { font-size: 1rem; }
+  .logo-name { font-size: 0.95rem; letter-spacing: 0.5px; }
   .logo > div:first-child { width: 30px !important; height: 30px !important; }
   .logo > div:first-child svg { width: 30px !important; height: 30px !important; }
 
