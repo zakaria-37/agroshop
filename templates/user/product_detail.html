@@ -44,8 +44,8 @@
       </div>
 
       <div class="detail-price">
-        <span class="detail-price-main">{{ "%.0f"|format(product.price * 135) }} DA</span>
-        <span class="detail-price-old">{{ "%.0f"|format(product.price * 1.15 * 135) }} DA</span>
+        <span class="detail-price-main">{{ "%.0f"|format(product.price) }} DA</span>
+        <span class="detail-price-old">{{ "%.0f"|format(product.price * 1.15) }} DA</span>
         <span class="detail-discount">Économisez 15%</span>
       </div>
 
@@ -170,7 +170,7 @@
           <span class="product-cat">{{ rp.category.name }}</span>
           <h3 class="product-name"><a href="{{ url_for('product_detail', pid=rp.id) }}">{{ rp.name }}</a></h3>
           <div class="product-bottom">
-            <span class="price-main">{{ "%.0f"|format(rp.price * 135) }} DA</span>
+            <span class="price-main">{{ "%.0f"|format(rp.price) }} DA</span>
           </div>
           <button class="btn-add-cart" onclick="addToCart({{ rp.id }}, '{{ rp.name }}', {{ rp.price }}, '{{ rp.image_url }}')">
             <i class="fa fa-cart-plus"></i> Ajouter au Panier
