@@ -1189,30 +1189,123 @@ input, select, textarea, button { font-family: var(--font-body); }
   .auth-brand { display:none; }
   .checkout-grid { grid-template-columns:1fr; }
 }
+
 @media (max-width:768px) {
+  /* ── Topbar ── */
   .topbar { display:none; }
-  .nav-search { display:none; }
-  .cat-nav { display:none; }
-  .hamburger { display:flex; }
-  .btn-outline-sm.nav-btn, .btn-primary-sm.nav-btn { display:none; }
-  .features-grid { grid-template-columns:1fr 1fr; }
-  .feature-item { border-right:none; border-bottom:1px solid var(--border); }
-  .categories-grid { grid-template-columns:repeat(2,1fr); }
-  .products-grid { grid-template-columns:repeat(2,1fr); }
-  .testimonials-grid { grid-template-columns:1fr; }
-  .products-page { grid-template-columns:1fr; }
-  .sidebar { display:none; }
-  .promo-inner { flex-direction:column; }
-  .promo-image { width:100%; height:160px; }
-  .footer-grid { grid-template-columns:1fr; }
-  .hero-stats { gap:16px; }
-  .form-grid-2, .form-grid-3 { grid-template-columns:1fr; }
+
+  /* ── Navbar layout ── */
+  .nav-inner {
+    padding: 10px 16px;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+
+  /* ── Logo : on garde icône + nom sur une ligne, on masque tagline/powered ── */
+  .logo { gap: 8px; flex-shrink: 0; min-width: 0; }
+  .logo > div:first-child { width: 36px !important; height: 36px !important; flex-shrink: 0; }
+  .logo > div:first-child svg { width: 36px !important; height: 36px !important; }
+  .logo-name { font-size: 1.1rem; letter-spacing: 1px; white-space: nowrap; }
+  .logo-tagline,
+  .logo-powered { display: none; }
+
+  /* ── Search : cachée sur mobile (accessible via menu) ── */
+  .nav-search { display: none; }
+
+  /* ── Actions : compact ── */
+  .nav-actions { gap: 6px; margin-left: auto; flex-shrink: 0; }
+  .btn-outline-sm,
+  .btn-primary-sm { padding: 6px 10px; font-size: 0.75rem; }
+
+  /* Masquer les boutons connexion/inscription du nav sur très petits écrans */
+  .btn-outline-sm.nav-btn,
+  .btn-primary-sm.nav-btn { display: none; }
+
+  /* ── Hamburger ── */
+  .hamburger { display: flex; }
+
+  /* ── Category Nav ── */
+  .cat-nav { display: none; }
+
+  /* ── Layout grilles ── */
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .feature-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .categories-grid { grid-template-columns: repeat(2,1fr); }
+  .products-grid { grid-template-columns: repeat(2,1fr); }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .products-page { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .promo-inner { flex-direction: column; }
+  .promo-image { width: 100%; height: 160px; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 12px; flex-wrap: wrap; }
+  .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 6px; text-align: center; }
+
+  /* ── Hero ── */
+  .hero { min-height: auto; }
+  .hero-content { padding: 40px 16px; flex-direction: column; }
+  .hero-text { max-width: 100%; }
+  .hero-title { font-size: clamp(1.8rem, 7vw, 2.8rem); }
+
+  /* ── Cart sidebar full width on mobile ── */
+  .cart-sidebar { width: 100%; right: -100%; }
+
+  /* ── Page header ── */
+  .page-header h1 { font-size: 1.4rem; }
+
+  /* ── Mobile search bar inside mobile menu ── */
+  .mobile-menu-search {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .mobile-menu-search form {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: rgba(46,204,113,0.04);
+  }
+  .mobile-menu-search input {
+    flex: 1; padding: 9px 14px; border: none; outline: none;
+    font-size: 0.85rem; background: transparent; color: var(--text);
+    font-family: var(--font-mono);
+  }
+  .mobile-menu-search input::placeholder { color: var(--text-muted); }
+  .mobile-menu-search button {
+    background: var(--green-neon); color: var(--bg-deep);
+    border: none; padding: 9px 16px; cursor: pointer;
+    font-weight: 700;
+  }
 }
+
 @media (max-width:480px) {
-  .products-grid { grid-template-columns:1fr; }
-  .categories-grid { grid-template-columns:1fr 1fr; }
-  .hero-actions { flex-direction:column; }
-  .btn-hero-primary, .btn-hero-secondary { width:100%; justify-content:center; }
+  /* ── Navbar encore plus compact ── */
+  .nav-inner { padding: 8px 12px; }
+  .logo-name { font-size: 1rem; }
+  .logo > div:first-child { width: 30px !important; height: 30px !important; }
+  .logo > div:first-child svg { width: 30px !important; height: 30px !important; }
+
+  /* ── Boutons connexion/inscription : masqués, accessibles via hamburger ── */
+  .btn-outline-sm,
+  .btn-primary-sm { display: none; }
+  .cart-btn { display: flex !important; }
+
+  /* ── Grilles ── */
+  .products-grid { grid-template-columns: 1fr 1fr; }
+  .categories-grid { grid-template-columns: 1fr 1fr; }
+
+  /* ── Hero buttons ── */
+  .hero-actions { flex-direction: column; }
+  .btn-hero-primary,
+  .btn-hero-secondary { width: 100%; justify-content: center; }
+
+  /* ── Stats ── */
+  .stat-divider { display: none; }
+
+  /* ── Orders ── */
+  .order-detail-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .order-actions { flex-wrap: wrap; }
 }
 
 /* ══════════════════════════════════════════════════════════════════
